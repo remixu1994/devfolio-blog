@@ -1,0 +1,17 @@
+.nx/installation
+.nx/cache
+.nx/workspace-data
+.nx/self-healing
+.angular
+node_modules
+dist
+.npm-cache
+storage/media/*
+!storage/media/.gitkeep
+runtime-logs
+.playwright-mcp
+devfolio-home.png
+
+__screenshots__/
+
+vitest.config.*.timestamp*

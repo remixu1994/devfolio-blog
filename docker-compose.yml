@@ -1,0 +1,55 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: devfolio-postgres
+    environment:
+      POSTGRES_DB: devfolio_blog
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  api:
+    image: node:22-alpine
+    container_name: devfolio-api
+    working_dir: /app
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - media-data:/app/storage/media
+    command: sh -c "npm install && node .nx/nxw.js serve api --host=0.0.0.0"
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres
+
+  site:
+    image: node:22-alpine
+    container_name: devfolio-site
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: sh -c "npm install && node .nx/nxw.js serve site --host=0.0.0.0"
+    ports:
+      - '4200:4200'
+    depends_on:
+      - api
+
+  admin:
+    image: node:22-alpine
+    container_name: devfolio-admin
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: sh -c "npm install && node .nx/nxw.js serve admin --host=0.0.0.0 --port=4300"
+    ports:
+      - '4300:4300'
+    depends_on:
+      - api
+
+volumes:
+  postgres-data:
+  media-data:
