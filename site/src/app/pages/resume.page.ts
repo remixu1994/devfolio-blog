@@ -1,74 +1,215 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { getLocale, getResumeViewModel } from '../site-content';
 
 @Component({
   standalone: true,
   template: `
-    <section class="rounded-[32px] border border-[color:var(--border-color)] bg-white/78 p-8">
-      <div class="flex flex-wrap items-start justify-between gap-6">
-        <div>
-          <p class="font-[var(--font-mono)] text-xs uppercase tracking-[0.3em] text-[color:var(--accent)]">
-            {{ viewModel().dictionary.resume.title }}
-          </p>
-          <h1 class="mt-4 font-[var(--font-display)] text-4xl font-semibold">{{ viewModel().resume.headline }}</h1>
-          <p class="mt-3 text-base text-[color:var(--muted)]">{{ viewModel().resume.intro }}</p>
-        </div>
-        <a
-          href="/resume/moon-devfolio-resume.pdf"
-          class="rounded-full border border-[color:var(--border-color)] px-5 py-3 text-sm font-medium"
-        >
-          {{ viewModel().dictionary.resume.download }}
-        </a>
-      </div>
+    <section class="grid gap-8">
+      <header class="border border-[color:var(--border-color)] bg-white">
+        <div class="grid gap-8 p-6 md:p-10 lg:grid-cols-[minmax(0,1fr)_18rem]">
+          <div>
+            <p class="font-[var(--font-mono)] text-xs uppercase tracking-[0.32em] text-[color:var(--accent)]">
+              {{ viewModel().resume.title }}
+            </p>
+            <h1 class="mt-4 font-[var(--font-display)] text-5xl font-semibold leading-tight md:text-7xl">
+              {{ viewModel().resume.name }}
+            </h1>
+            <p class="mt-4 text-2xl font-semibold text-[color:var(--ink)]">{{ viewModel().resume.headline }}</p>
+            <p class="mt-5 max-w-4xl text-base leading-8 text-[color:var(--muted)]">{{ viewModel().resume.intro }}</p>
+          </div>
 
-      <div class="mt-10 grid gap-8 lg:grid-cols-[1fr_0.9fr]">
-        <div>
-          <h2 class="font-[var(--font-display)] text-2xl font-semibold">Experience</h2>
-          <div class="mt-5 grid gap-6">
-            @for (item of viewModel().resume.experiences; track item.company + item.role) {
-              <article class="rounded-[24px] border border-[color:var(--border-color)] bg-[color:var(--panel)] p-6">
-                <div class="flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <h3 class="text-xl font-semibold">{{ item.role }}</h3>
-                    <p class="text-sm text-[color:var(--muted)]">{{ item.company }}</p>
+          <aside class="border-l border-[color:var(--border-color)] pl-6">
+            <p class="font-[var(--font-mono)] text-[10px] uppercase tracking-[0.3em] text-[color:var(--muted)]">
+              {{ viewModel().resume.labels.profile }}
+            </p>
+            <dl class="mt-5 grid gap-4 text-sm">
+              <div>
+                <dt class="font-[var(--font-mono)] text-[10px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
+                  {{ viewModel().resume.labels.location }}
+                </dt>
+                <dd class="mt-1 font-medium">{{ viewModel().resume.location }}</dd>
+              </div>
+              <div>
+                <dt class="font-[var(--font-mono)] text-[10px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
+                  {{ viewModel().resume.labels.gender }}
+                </dt>
+                <dd class="mt-1 font-medium">{{ viewModel().resume.gender }}</dd>
+              </div>
+              <div>
+                <dt class="font-[var(--font-mono)] text-[10px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
+                  {{ viewModel().resume.labels.age }}
+                </dt>
+                <dd class="mt-1 font-medium">{{ viewModel().resume.age }}</dd>
+              </div>
+              <div>
+                <dt class="font-[var(--font-mono)] text-[10px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
+                  {{ viewModel().resume.labels.drivingLicense }}
+                </dt>
+                <dd class="mt-1 font-medium">{{ viewModel().resume.drivingLicense }}</dd>
+              </div>
+            </dl>
+            <a
+              href="/resume/moon-devfolio-resume.pdf"
+              class="mt-7 inline-flex border border-[color:var(--border-color)] px-5 py-3 text-sm font-medium transition hover:border-[color:var(--accent)] hover:text-[color:var(--accent)]"
+            >
+              {{ viewModel().dictionary.resume.download }}
+            </a>
+          </aside>
+        </div>
+
+        <div class="grid border-t border-[color:var(--border-color)] md:grid-cols-3">
+          @for (metric of viewModel().resume.heroMetrics; track metric.label) {
+            <div class="border-b border-[color:var(--border-color)] px-6 py-5 md:border-b-0 md:border-r md:last:border-r-0">
+              <p class="font-[var(--font-mono)] text-[10px] uppercase tracking-[0.28em] text-[color:var(--muted)]">{{ metric.label }}</p>
+              <p class="mt-2 text-3xl font-semibold">{{ metric.value }}</p>
+            </div>
+          }
+        </div>
+      </header>
+
+      <section class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
+        <div class="grid gap-8">
+          <article class="border border-[color:var(--border-color)] bg-white p-6 md:p-8">
+            <p class="font-[var(--font-mono)] text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">
+              {{ viewModel().resume.labels.professionalSummary }}
+            </p>
+            <div class="mt-6 grid gap-4">
+              @for (point of viewModel().resume.summaryPoints; track point) {
+                <p class="border-l-2 border-[color:var(--accent)] pl-4 text-sm leading-7 text-[color:var(--muted)]">{{ point }}</p>
+              }
+            </div>
+          </article>
+
+          <article class="border border-[color:var(--border-color)] bg-white p-6 md:p-8">
+            <p class="font-[var(--font-mono)] text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">
+              {{ viewModel().resume.labels.projectExperience }}
+            </p>
+            <div class="mt-6 grid gap-5">
+              @for (project of viewModel().resume.projects; track project.title) {
+                <section class="border border-[color:var(--border-color)] bg-[color:var(--panel)] p-5">
+                  <div class="grid gap-3 md:grid-cols-[minmax(0,1fr)_8rem]">
+                    <div>
+                      <p class="font-[var(--font-mono)] text-xs uppercase tracking-[0.24em] text-[color:var(--accent)]">{{ project.role }}</p>
+                      <h2 class="mt-2 text-2xl font-semibold leading-snug">{{ project.title }}</h2>
+                    </div>
+                    <p class="font-[var(--font-mono)] text-xs uppercase tracking-[0.24em] text-[color:var(--muted)] md:text-right">
+                      {{ project.period }}
+                    </p>
                   </div>
-                  <span class="font-[var(--font-mono)] text-xs uppercase tracking-[0.28em] text-[color:var(--muted)]">{{ item.period }}</span>
-                </div>
-                <p class="mt-4 text-sm leading-7 text-[color:var(--muted)]">{{ item.summary }}</p>
-                <ul class="mt-4 grid gap-2 text-sm leading-7 text-[color:var(--ink)]">
-                  @for (highlight of item.highlights; track highlight) {
-                    <li>• {{ highlight }}</li>
-                  }
-                </ul>
-              </article>
-            }
-          </div>
+                  <p class="mt-4 text-sm leading-7 text-[color:var(--muted)]">{{ project.summary }}</p>
+                  <div class="mt-4 flex flex-wrap gap-2">
+                    @for (item of project.stack; track item) {
+                      <span class="border border-[color:var(--border-color)] bg-white px-3 py-1 text-xs text-[color:var(--muted)]">{{ item }}</span>
+                    }
+                  </div>
+                  <ul class="mt-4 grid gap-2 text-sm leading-7 text-[color:var(--ink)]">
+                    @for (highlight of project.highlights; track highlight) {
+                      <li class="flex gap-3">
+                        <span class="mt-3 h-1.5 w-1.5 shrink-0 bg-[color:var(--accent)]"></span>
+                        <span>{{ highlight }}</span>
+                      </li>
+                    }
+                  </ul>
+                </section>
+              }
+            </div>
+          </article>
+
+          <article class="border border-[color:var(--border-color)] bg-white p-6 md:p-8">
+            <p class="font-[var(--font-mono)] text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">
+              {{ viewModel().resume.labels.employmentHistory }}
+            </p>
+            <div class="mt-6 divide-y divide-[color:var(--border-color)]">
+              @for (item of viewModel().resume.experiences; track item.period + item.role) {
+                <section class="grid gap-4 py-6 first:pt-0 last:pb-0 md:grid-cols-[9rem_minmax(0,1fr)]">
+                  <p class="font-[var(--font-mono)] text-xs uppercase tracking-[0.24em] text-[color:var(--accent)]">{{ item.period }}</p>
+                  <div>
+                    <h2 class="text-2xl font-semibold leading-snug">{{ item.role }}</h2>
+                    <p class="mt-1 text-sm font-medium text-[color:var(--muted)]">{{ item.company }}</p>
+                    <p class="mt-4 text-sm leading-7 text-[color:var(--muted)]">{{ item.summary }}</p>
+                    <ul class="mt-4 grid gap-2 text-sm leading-7 text-[color:var(--ink)]">
+                      @for (highlight of item.highlights; track highlight) {
+                        <li class="flex gap-3">
+                          <span class="mt-3 h-1.5 w-1.5 shrink-0 bg-[color:var(--accent)]"></span>
+                          <span>{{ highlight }}</span>
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                </section>
+              }
+            </div>
+          </article>
+
+          <article class="border border-[color:var(--border-color)] bg-white p-6 md:p-8">
+            <p class="font-[var(--font-mono)] text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">
+              {{ viewModel().resume.labels.competences }}
+            </p>
+            <div class="mt-6 grid gap-5 md:grid-cols-2">
+              @for (group of viewModel().resume.skillGroups; track group.title) {
+                <section class="border-l border-[color:var(--border-color)] pl-4">
+                  <h2 class="text-lg font-semibold">{{ group.title }}</h2>
+                  <div class="mt-4 flex flex-wrap gap-2">
+                    @for (item of group.items; track item) {
+                      <span class="bg-[color:var(--accent-soft)] px-3 py-1 text-xs text-[color:var(--accent)]">{{ item }}</span>
+                    }
+                  </div>
+                </section>
+              }
+            </div>
+          </article>
         </div>
 
-        <div>
-          <h2 class="font-[var(--font-display)] text-2xl font-semibold">Capabilities</h2>
-          <div class="mt-5 grid gap-4">
-            @for (group of viewModel().resume.skillGroups; track group.title) {
-              <article class="rounded-[24px] border border-[color:var(--border-color)] bg-[color:var(--panel)] p-6">
-                <h3 class="text-lg font-semibold">{{ group.title }}</h3>
-                <div class="mt-4 flex flex-wrap gap-2">
-                  @for (item of group.items; track item) {
-                    <span class="rounded-full bg-[color:var(--accent-soft)] px-3 py-1 text-xs text-[color:var(--accent)]">{{ item }}</span>
-                  }
+        <aside class="grid content-start gap-6">
+          <section class="border border-[color:var(--border-color)] bg-white p-6">
+            <p class="font-[var(--font-mono)] text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">
+              {{ viewModel().resume.labels.education }}
+            </p>
+            <div class="mt-5 grid gap-5">
+              @for (item of viewModel().resume.education; track item.school) {
+                <article>
+                  <p class="font-[var(--font-mono)] text-xs uppercase tracking-[0.24em] text-[color:var(--accent)]">{{ item.period }}</p>
+                  <h2 class="mt-2 text-lg font-semibold">{{ item.school }}</h2>
+                  <p class="mt-1 text-sm leading-6 text-[color:var(--muted)]">{{ item.degree }}</p>
+                </article>
+              }
+            </div>
+          </section>
+
+          <section class="border border-[color:var(--border-color)] bg-[rgba(255,252,246,0.86)] p-6">
+            <p class="font-[var(--font-mono)] text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">
+              {{ viewModel().resume.labels.languages }}
+            </p>
+            <div class="mt-5 grid gap-4">
+              @for (item of viewModel().resume.languages; track item.name) {
+                <div class="flex items-start justify-between gap-4 border-b border-[color:var(--border-color)] pb-4 last:border-b-0 last:pb-0">
+                  <h2 class="font-semibold">{{ item.name }}</h2>
+                  <p class="max-w-36 text-right text-xs leading-5 text-[color:var(--muted)]">{{ item.proficiency }}</p>
                 </div>
-              </article>
-            }
-          </div>
-        </div>
-      </div>
+              }
+            </div>
+          </section>
+
+          <section class="border border-[color:var(--border-color)] bg-[color:var(--ink)] p-6 text-white">
+            <p class="font-[var(--font-mono)] text-xs uppercase tracking-[0.3em] text-white/60">
+              {{ viewModel().resume.labels.focus }}
+            </p>
+            <p class="mt-4 text-2xl font-semibold leading-tight">{{ viewModel().resume.focus }}</p>
+          </section>
+        </aside>
+      </section>
     </section>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResumePageComponent {
   private readonly route = inject(ActivatedRoute);
+  private readonly parentParamMap = toSignal((this.route.parent?.paramMap ?? this.route.paramMap), {
+    initialValue: (this.route.parent?.snapshot.paramMap ?? this.route.snapshot.paramMap),
+  });
 
-  readonly locale = computed(() => getLocale(this.route.parent?.snapshot.paramMap.get('locale')));
+  readonly locale = computed(() => getLocale(this.parentParamMap().get('locale')));
   readonly viewModel = computed(() => getResumeViewModel(this.locale()));
 }

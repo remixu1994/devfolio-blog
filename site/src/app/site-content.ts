@@ -8,7 +8,7 @@ import {
 } from '@devfolio-blog/content-data';
 import { dictionaries, normalizeLocale, switchLocale, withLocalePath } from '@devfolio-blog/i18n';
 import { renderMarkdown } from '@devfolio-blog/markdown';
-import type { Locale } from '@devfolio-blog/shared-types';
+import type { Locale, PublicPost, PublicPostSummary } from '@devfolio-blog/shared-types';
 
 export function getDictionary(locale: string) {
   return dictionaries[normalizeLocale(locale)];
@@ -30,9 +30,16 @@ export function getShellLinks(locale: Locale) {
 }
 
 export function getHomeViewModel(locale: Locale) {
+  const posts = getPublishedPosts(locale);
+
   return {
     dictionary: dictionaries[locale],
-    featured: getFeaturedPayload(locale),
+    featured: {
+      ...getFeaturedPayload(locale),
+      recentPosts: posts.slice(0, 3),
+    },
+    blogTopics: getBlogTopics(posts),
+    blogSeries: getBlogSeries(posts),
   };
 }
 
@@ -73,21 +80,79 @@ export function getTopicViewModel(locale: Locale, slug: string) {
 }
 
 export function getBlogListViewModel(locale: Locale) {
+  const items = getPublishedPosts(locale);
+
   return {
     dictionary: dictionaries[locale],
-    items: seedPosts.filter((post) => post.locale === locale && post.published),
+    items,
+    highlightedPost: items[0],
+    latestPosts: items.slice(1),
+    topics: getBlogTopics(items),
+    series: getBlogSeries(items),
   };
 }
 
 export function getBlogDetailViewModel(locale: Locale, slug: string) {
-  const item = seedPosts.find((post) => post.locale === locale && post.slug === slug && post.published);
+  const posts = getPublishedPosts(locale);
+  const item = posts.find((post) => post.slug === slug);
+
   return item
     ? {
         dictionary: dictionaries[locale],
         item,
         html: renderMarkdown(item.body),
+        relatedPosts: getRelatedPosts(item, posts),
       }
     : null;
+}
+
+function getPublishedPosts(locale: Locale): PublicPost[] {
+  return seedPosts
+    .filter((post) => post.locale === locale && post.published)
+    .sort((left, right) => right.updatedAt.localeCompare(left.updatedAt));
+}
+
+function getBlogTopics(posts: PublicPostSummary[]) {
+  const counts = new Map<string, number>();
+
+  for (const post of posts) {
+    for (const tag of post.tags) {
+      counts.set(tag, (counts.get(tag) ?? 0) + 1);
+    }
+  }
+
+  return [...counts.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .sort((left, right) => right.count - left.count || left.name.localeCompare(right.name));
+}
+
+function getBlogSeries(posts: PublicPostSummary[]) {
+  const counts = new Map<string, number>();
+
+  for (const post of posts) {
+    if (post.series) {
+      counts.set(post.series, (counts.get(post.series) ?? 0) + 1);
+    }
+  }
+
+  return [...counts.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .sort((left, right) => right.count - left.count || left.name.localeCompare(right.name));
+}
+
+function getRelatedPosts(item: PublicPostSummary, posts: PublicPostSummary[]) {
+  return posts
+    .filter((post) => post.id !== item.id)
+    .map((post) => ({
+      post,
+      score:
+        (item.series && post.series === item.series ? 10 : 0) +
+        post.tags.filter((tag) => item.tags.includes(tag)).length,
+    }))
+    .filter(({ score }) => score > 0)
+    .sort((left, right) => right.score - left.score || right.post.updatedAt.localeCompare(left.post.updatedAt))
+    .slice(0, 3)
+    .map(({ post }) => post);
 }
 
 export function getLocaleSwitch(locale: Locale, currentPath: string) {

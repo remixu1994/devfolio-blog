@@ -23,8 +23,9 @@ export interface ShellLink {
             @for (link of links(); track link.href) {
               <a
                 [routerLink]="link.href"
-                routerLinkActive="bg-[color:var(--ink)] text-white"
-                class="rounded-full px-4 py-2 text-sm text-[color:var(--muted)] transition hover:bg-[color:var(--accent-soft)] hover:text-[color:var(--ink)]"
+                [routerLinkActiveOptions]="{ exact: link.href === homeHref() }"
+                routerLinkActive="border-[color:var(--accent)] bg-[color:var(--accent-soft)] !text-[color:var(--accent-strong)]"
+                class="rounded-full border border-transparent px-4 py-2 text-sm text-[color:var(--muted)] transition hover:bg-[color:var(--accent-soft)] hover:text-[color:var(--ink)]"
               >
                 {{ link.label }}
               </a>

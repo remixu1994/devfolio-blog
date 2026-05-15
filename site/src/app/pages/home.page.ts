@@ -1,5 +1,6 @@
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { withLocalePath } from '@devfolio-blog/i18n';
 import { SectionCardComponent, TopicLaneComponent } from '@devfolio-blog/ui';
 import { getHomeViewModel, getLocale } from '../site-content';
@@ -165,8 +166,8 @@ import { getHomeViewModel, getLocale } from '../site-content';
       </div>
     </section>
 
-    <section class="mt-10 rounded-[36px] border border-[color:var(--border-color)] bg-[rgba(255,249,240,0.78)] p-6 md:p-8">
-      <div class="flex flex-wrap items-end justify-between gap-4">
+    <section class="mt-10 border border-[color:var(--border-color)] bg-white">
+      <div class="flex flex-wrap items-end justify-between gap-4 border-b border-[color:var(--border-color)] px-6 py-6 md:px-8">
         <div>
           <p class="font-[var(--font-mono)] text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">Recent Writing</p>
           <h2 class="mt-3 font-[var(--font-display)] text-3xl font-semibold">{{ viewModel().dictionary.home.recentLabel }}</h2>
@@ -176,31 +177,53 @@ import { getHomeViewModel, getLocale } from '../site-content';
         </a>
       </div>
 
-      <div class="mt-6 grid gap-5 lg:grid-cols-3">
-        @for (post of viewModel().featured.recentPosts; track post.id) {
-          <a
-            [routerLink]="['/', locale(), 'blog', post.slug]"
-            class="group rounded-[28px] border border-[color:var(--border-color)] bg-white/82 p-5 transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(23,24,28,0.08)]"
-          >
-            <div class="flex items-center justify-between gap-3">
-              <span class="font-[var(--font-mono)] text-[10px] uppercase tracking-[0.3em] text-[color:var(--muted)]">{{ post.updatedAt }}</span>
-              <span class="rounded-full bg-[color:var(--highlight-soft)] px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-[color:var(--highlight)]">
-                {{ post.locale }}
+      <div class="grid lg:grid-cols-[minmax(0,1fr)_18rem]">
+        <div class="divide-y divide-[color:var(--border-color)]">
+          @for (post of viewModel().featured.recentPosts; track post.id) {
+            <a
+              [routerLink]="['/', locale(), 'blog', post.slug]"
+              class="grid gap-4 px-6 py-6 transition hover:bg-[color:var(--panel)] md:grid-cols-[8rem_minmax(0,1fr)] md:px-8"
+            >
+              <div class="font-[var(--font-mono)] text-[10px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
+                <p>{{ post.updatedAt }}</p>
+                @if (post.series) {
+                  <p class="mt-2 text-[color:var(--accent)]">{{ post.series }}</p>
+                }
+              </div>
+              <div>
+                <h3 class="text-2xl font-semibold leading-snug text-[color:var(--ink)]">{{ post.title }}</h3>
+                <p class="mt-2 text-sm leading-7 text-[color:var(--muted)]">{{ post.summary }}</p>
+                <div class="mt-4 flex flex-wrap gap-x-3 gap-y-2 text-xs text-[color:var(--muted)]">
+                  @for (tag of post.tags; track tag) {
+                    <span>{{ tag }}</span>
+                  }
+                </div>
+              </div>
+            </a>
+          }
+        </div>
+
+        <aside class="border-t border-[color:var(--border-color)] bg-[rgba(255,252,246,0.84)] p-6 lg:border-l lg:border-t-0 md:p-8">
+          <p class="font-[var(--font-mono)] text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">Topics</p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            @for (topic of viewModel().blogTopics; track topic.name) {
+              <span class="border border-[color:var(--border-color)] bg-white px-3 py-2 text-xs text-[color:var(--muted)]">
+                {{ topic.name }} / {{ topic.count }}
               </span>
-            </div>
-            <h3 class="mt-4 text-2xl font-semibold text-[color:var(--ink)]">{{ post.title }}</h3>
-            <p class="mt-3 text-sm leading-7 text-[color:var(--muted)]">{{ post.summary }}</p>
-            <div class="mt-5 flex flex-wrap gap-2">
-              @for (tag of post.tags; track tag) {
-                <span class="rounded-full bg-[color:var(--accent-soft)] px-3 py-1 text-xs text-[color:var(--accent)]">{{ tag }}</span>
+            }
+          </div>
+          @if (viewModel().blogSeries.length > 0) {
+            <p class="mt-7 font-[var(--font-mono)] text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">Series</p>
+            <div class="mt-4 grid gap-3 text-sm">
+              @for (item of viewModel().blogSeries; track item.name) {
+                <div class="flex items-center justify-between gap-4">
+                  <span class="font-medium">{{ item.name }}</span>
+                  <span class="font-[var(--font-mono)] text-xs text-[color:var(--muted)]">{{ item.count }}</span>
+                </div>
               }
             </div>
-            <div class="mt-6 inline-flex items-center gap-2 text-sm font-medium text-[color:var(--ink)]">
-              Open article
-              <span class="transition-transform duration-300 group-hover:translate-x-1">-></span>
-            </div>
-          </a>
-        }
+          }
+        </aside>
       </div>
     </section>
   `,
@@ -208,8 +231,11 @@ import { getHomeViewModel, getLocale } from '../site-content';
 })
 export class HomePageComponent {
   private readonly route = inject(ActivatedRoute);
+  private readonly parentParamMap = toSignal((this.route.parent?.paramMap ?? this.route.paramMap), {
+    initialValue: (this.route.parent?.snapshot.paramMap ?? this.route.snapshot.paramMap),
+  });
 
-  readonly locale = computed(() => getLocale(this.route.parent?.snapshot.paramMap.get('locale')));
+  readonly locale = computed(() => getLocale(this.parentParamMap().get('locale')));
   readonly viewModel = computed(() => getHomeViewModel(this.locale()));
 
   topicHref(slug: string) {

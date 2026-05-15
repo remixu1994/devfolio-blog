@@ -77,7 +77,7 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
       sections: '专题章节',
       stack: '技术栈',
     },
-    footer: 'Built with Angular, NestJS, Nx and a self-hosted mindset.',
+    footer: '基于 Angular、NestJS 与 Nx 构建，记录全栈工程、系统架构和自托管实践。',
   },
   en: {
     brand: 'Moon Devfolio',
@@ -116,7 +116,7 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
       sections: 'Topic sections',
       stack: 'Tech stack',
     },
-    footer: 'Built with Angular, NestJS, Nx and a self-hosted mindset.',
+    footer: 'Built with Angular, NestJS, and Nx to document full-stack engineering, architecture, and self-hosted practice.',
   },
 };
 

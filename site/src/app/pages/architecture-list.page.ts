@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { getArchitectureListViewModel, getLocale } from '../site-content';
 
 @Component({
@@ -39,7 +40,10 @@ import { getArchitectureListViewModel, getLocale } from '../site-content';
 })
 export class ArchitectureListPageComponent {
   private readonly route = inject(ActivatedRoute);
+  private readonly parentParamMap = toSignal((this.route.parent?.paramMap ?? this.route.paramMap), {
+    initialValue: (this.route.parent?.snapshot.paramMap ?? this.route.snapshot.paramMap),
+  });
 
-  readonly locale = computed(() => getLocale(this.route.parent?.snapshot.paramMap.get('locale')));
+  readonly locale = computed(() => getLocale(this.parentParamMap().get('locale')));
   readonly viewModel = computed(() => getArchitectureListViewModel(this.locale()));
 }

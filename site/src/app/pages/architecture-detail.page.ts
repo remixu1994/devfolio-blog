@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { getArchitectureDetailViewModel, getLocale } from '../site-content';
 
 @Component({
@@ -50,10 +51,16 @@ import { getArchitectureDetailViewModel, getLocale } from '../site-content';
 export class ArchitectureDetailPageComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly sanitizer = inject(DomSanitizer);
+  private readonly parentParamMap = toSignal((this.route.parent?.paramMap ?? this.route.paramMap), {
+    initialValue: (this.route.parent?.snapshot.paramMap ?? this.route.snapshot.paramMap),
+  });
+  private readonly paramMap = toSignal(this.route.paramMap, {
+    initialValue: this.route.snapshot.paramMap,
+  });
 
-  readonly locale = computed(() => getLocale(this.route.parent?.snapshot.paramMap.get('locale')));
+  readonly locale = computed(() => getLocale(this.parentParamMap().get('locale')));
   readonly viewModel = computed(() =>
-    getArchitectureDetailViewModel(this.locale(), this.route.snapshot.paramMap.get('slug') ?? ''),
+    getArchitectureDetailViewModel(this.locale(), this.paramMap().get('slug') ?? ''),
   );
   readonly html = computed<SafeHtml>(() =>
     this.sanitizer.bypassSecurityTrustHtml(this.viewModel()?.html ?? ''),

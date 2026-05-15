@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { getLocale, getTopicViewModel } from '../site-content';
 
 @Component({
@@ -39,8 +40,11 @@ import { getLocale, getTopicViewModel } from '../site-content';
 export class TopicPageComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly sanitizer = inject(DomSanitizer);
+  private readonly parentParamMap = toSignal((this.route.parent?.paramMap ?? this.route.paramMap), {
+    initialValue: (this.route.parent?.snapshot.paramMap ?? this.route.snapshot.paramMap),
+  });
 
-  readonly locale = computed(() => getLocale(this.route.parent?.snapshot.paramMap.get('locale')));
+  readonly locale = computed(() => getLocale(this.parentParamMap().get('locale')));
   readonly slug = computed(() => this.route.snapshot.data['slug'] as string);
   readonly viewModel = computed(() => getTopicViewModel(this.locale(), this.slug()));
   readonly html = computed<SafeHtml>(() =>

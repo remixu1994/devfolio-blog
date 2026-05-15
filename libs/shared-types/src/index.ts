@@ -29,15 +29,61 @@ export interface ResumeSkillGroup {
   items: string[];
 }
 
+export interface ResumeProject {
+  title: string;
+  role: string;
+  period: string;
+  summary: string;
+  stack: string[];
+  highlights: string[];
+}
+
+export interface ResumeEducation {
+  school: string;
+  degree: string;
+  period: string;
+}
+
+export interface ResumeLanguage {
+  name: string;
+  proficiency: string;
+}
+
+export interface ResumeLabels {
+  profile: string;
+  location: string;
+  gender: string;
+  age: string;
+  drivingLicense: string;
+  professionalSummary: string;
+  projectExperience: string;
+  employmentHistory: string;
+  competences: string;
+  education: string;
+  languages: string;
+  focus: string;
+}
+
 export interface ResumeProfile {
   locale: Locale;
+  name: string;
+  title: string;
   headline: string;
   location: string;
+  gender: string;
+  age: string;
   contactEmail: string;
   intro: string;
   heroMetrics: HeroMetric[];
+  summaryPoints: string[];
+  projects: ResumeProject[];
   experiences: ResumeExperience[];
   skillGroups: ResumeSkillGroup[];
+  education: ResumeEducation[];
+  languages: ResumeLanguage[];
+  labels: ResumeLabels;
+  focus: string;
+  drivingLicense?: string;
 }
 
 export interface ArchitectureCase extends StaticContentFrontmatter {
