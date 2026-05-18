@@ -7,12 +7,12 @@ import { PostsService } from '../posts/posts.service';
 export class PublicContentService {
   constructor(private readonly postsService: PostsService) {}
 
-  getPosts(locale?: string) {
+  async getPosts(locale?: string) {
     return this.postsService.getPublishedPosts(locale ? normalizeLocale(locale) : undefined);
   }
 
-  getPost(slug: string, locale?: string) {
-    const post = this.postsService.getPostBySlug(slug, locale ? normalizeLocale(locale) : undefined);
+  async getPost(slug: string, locale?: string) {
+    const post = await this.postsService.getPostBySlug(slug, locale ? normalizeLocale(locale) : undefined);
 
     if (!post || !post.published) {
       throw new NotFoundException(`Post ${slug} was not found.`);
@@ -21,21 +21,21 @@ export class PublicContentService {
     return post;
   }
 
-  getSeries() {
+  async getSeries() {
     return this.postsService.getSeriesSummaries();
   }
 
-  getTags() {
+  async getTags() {
     return this.postsService.getTagSummaries();
   }
 
-  getFeatured(locale?: string) {
+  async getFeatured(locale?: string) {
     const normalizedLocale = normalizeLocale(locale);
     const featured = getFeaturedPayload(normalizedLocale);
 
     return {
       ...featured,
-      recentPosts: this.postsService.getPublishedPosts(normalizedLocale).slice(0, 3),
+      recentPosts: (await this.postsService.getPublishedPosts(normalizedLocale)).slice(0, 3),
     };
   }
 }

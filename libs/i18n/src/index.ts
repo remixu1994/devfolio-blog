@@ -42,7 +42,7 @@ export interface SiteDictionary {
 export const dictionaries: Record<Locale, SiteDictionary> = {
   zh: {
     brand: 'Moon Devfolio',
-    tagline: '全栈工程、系统架构、自托管实践与 AI 产品化',
+    tagline: '复杂业务系统、工程交付与产品化实践',
     nav: {
       home: '首页',
       resume: '简历',
@@ -55,7 +55,7 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     home: {
       heroTitle: '把复杂系统做成可靠产品的全栈工程师',
       heroBody:
-        '围绕 Angular、NestJS、Nx Monorepo、微服务与自托管基础设施，持续沉淀可交付的工程能力与设计方法。',
+        '关注复杂业务拆解、服务边界设计、稳定性交付与产品化落地，把长期工程经验沉淀为可复用的方法和案例。',
       featuredLabel: '代表架构',
       recentLabel: '最新写作',
       contactLabel: '联系与协作',
@@ -77,7 +77,7 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
       sections: '专题章节',
       stack: '技术栈',
     },
-    footer: '基于 Angular、NestJS 与 Nx 构建，记录全栈工程、系统架构和自托管实践。',
+    footer: 'Moon Devfolio 记录工程实践、架构思考与产品化探索。',
   },
   en: {
     brand: 'Moon Devfolio',
@@ -94,7 +94,7 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     home: {
       heroTitle: 'A full-stack engineer who turns complex systems into reliable products',
       heroBody:
-        'Focused on Angular, NestJS, Nx monorepos, microservice architecture, and self-hosted infrastructure that ships.',
+        'Focused on business decomposition, service boundaries, reliable delivery, and product-minded engineering practice.',
       featuredLabel: 'Featured architecture',
       recentLabel: 'Recent writing',
       contactLabel: 'Contact',
@@ -116,7 +116,7 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
       sections: 'Topic sections',
       stack: 'Tech stack',
     },
-    footer: 'Built with Angular, NestJS, and Nx to document full-stack engineering, architecture, and self-hosted practice.',
+    footer: 'Moon Devfolio documents engineering practice, architecture thinking, and product exploration.',
   },
 };
 

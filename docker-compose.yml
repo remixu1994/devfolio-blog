@@ -17,6 +17,9 @@ services:
     working_dir: /app
     env_file:
       - .env
+    environment:
+      DATABASE_TYPE: postgres
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/devfolio_blog
     volumes:
       - .:/app
       - media-data:/app/storage/media

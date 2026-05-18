@@ -1,65 +1,127 @@
 import { seedPosts } from '@devfolio-blog/content-data';
 import type { CreatePostDto, Locale, PublicPost, SeriesSummary, TagSummary, UpdatePostDto } from '@devfolio-blog/shared-types';
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { randomUUID } from 'crypto';
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { PostTranslationEntity } from './entities/post-translation.entity';
+import { PostEntity } from './entities/post.entity';
 
 @Injectable()
-export class PostsService {
-  private readonly posts = [...seedPosts];
+export class PostsService implements OnModuleInit {
+  constructor(
+    @InjectRepository(PostEntity)
+    private readonly postRepository: Repository<PostEntity>,
+  ) {}
 
-  getAllPosts(): PublicPost[] {
-    return [...this.posts].sort((left, right) => right.updatedAt.localeCompare(left.updatedAt));
+  async onModuleInit(): Promise<void> {
+    const count = await this.postRepository.count();
+
+    if (count > 0) {
+      return;
+    }
+
+    await this.postRepository.save(seedPosts.map((post) => this.toEntity(post)));
   }
 
-  getPublishedPosts(locale?: Locale): PublicPost[] {
-    return this.getAllPosts().filter(
-      (post) => post.published && (!locale || post.locale === locale),
-    );
+  async getAllPosts(): Promise<PublicPost[]> {
+    const posts = await this.findAllEntities();
+    return posts.flatMap((post) => this.toPublicPosts(post));
   }
 
-  getPostBySlug(slug: string, locale?: Locale): PublicPost | undefined {
-    return this.posts.find((post) => post.slug === slug && (!locale || post.locale === locale));
+  async getPublishedPosts(locale?: Locale): Promise<PublicPost[]> {
+    const posts = await this.getAllPosts();
+    return posts.filter((post) => post.published && (!locale || post.locale === locale));
   }
 
-  createPost(payload: CreatePostDto): PublicPost {
-    const post: PublicPost = {
-      id: randomUUID(),
+  async getPostBySlug(slug: string, locale?: Locale): Promise<PublicPost | undefined> {
+    const post = await this.postRepository.findOne({
+      where: { slug },
+      relations: { translations: true },
+    });
+
+    if (!post) {
+      return undefined;
+    }
+
+    return this.toPublicPosts(post).find((item) => !locale || item.locale === locale);
+  }
+
+  async createPost(payload: CreatePostDto): Promise<PublicPost> {
+    const post = this.postRepository.create({
       slug: payload.slug,
-      locale: payload.locale,
-      title: payload.title,
-      summary: payload.summary,
-      body: payload.body,
+      status: payload.published ? 'published' : 'draft',
+      seriesName: payload.series,
       tags: payload.tags,
       heroImage: payload.heroImage,
-      updatedAt: new Date().toISOString().slice(0, 10),
-      published: payload.published ?? false,
-      status: payload.published ? 'published' : 'draft',
-      series: payload.series,
-    };
-
-    this.posts.unshift(post);
-    return post;
+      translations: [this.toTranslation(payload)],
+    });
+    const saved = await this.postRepository.save(post);
+    return this.toPublicPosts(saved)[0];
   }
 
-  updatePost(id: string, payload: UpdatePostDto): PublicPost {
-    const current = this.posts.find((post) => post.id === id);
+  async updatePost(id: string, payload: UpdatePostDto): Promise<PublicPost> {
+    const current = await this.postRepository.findOne({
+      where: { id },
+      relations: { translations: true },
+    });
 
     if (!current) {
       throw new NotFoundException(`Post ${id} was not found.`);
     }
 
-    Object.assign(current, payload, {
-      updatedAt: new Date().toISOString().slice(0, 10),
-      status: payload.published === undefined ? current.status : payload.published ? 'published' : 'draft',
-    });
+    if (payload.slug !== undefined) {
+      current.slug = payload.slug;
+    }
+    if (payload.tags !== undefined) {
+      current.tags = payload.tags;
+    }
+    if (payload.heroImage !== undefined) {
+      current.heroImage = payload.heroImage;
+    }
+    if (payload.series !== undefined) {
+      current.seriesName = payload.series;
+    }
+    if (payload.published !== undefined) {
+      current.status = payload.published ? 'published' : 'draft';
+    }
 
-    return current;
+    const locale = payload.locale ?? current.translations[0]?.locale ?? 'zh';
+    let translation = current.translations.find((item) => item.locale === locale);
+
+    if (!translation) {
+      translation = this.toTranslation({
+        locale,
+        title: payload.title ?? '',
+        summary: payload.summary ?? '',
+        body: payload.body ?? '',
+      });
+      current.translations.push(translation);
+    } else {
+      if (payload.title !== undefined) {
+        translation.title = payload.title;
+      }
+      if (payload.summary !== undefined) {
+        translation.summary = payload.summary;
+      }
+      if (payload.body !== undefined) {
+        translation.body = payload.body;
+      }
+    }
+
+    const saved = await this.postRepository.save(current);
+    const updated = this.toPublicPosts(saved).find((post) => post.locale === locale);
+
+    if (!updated) {
+      throw new NotFoundException(`Post ${id} translation was not found.`);
+    }
+
+    return updated;
   }
 
-  getTagSummaries(): TagSummary[] {
+  async getTagSummaries(): Promise<TagSummary[]> {
     const counts = new Map<string, number>();
 
-    for (const post of this.getPublishedPosts()) {
+    for (const post of await this.getPublishedPosts()) {
       for (const tag of post.tags) {
         counts.set(tag, (counts.get(tag) ?? 0) + 1);
       }
@@ -70,10 +132,10 @@ export class PostsService {
       .sort((left, right) => right.count - left.count || left.name.localeCompare(right.name));
   }
 
-  getSeriesSummaries(): SeriesSummary[] {
+  async getSeriesSummaries(): Promise<SeriesSummary[]> {
     const counts = new Map<string, number>();
 
-    for (const post of this.getPublishedPosts()) {
+    for (const post of await this.getPublishedPosts()) {
       if (!post.series) {
         continue;
       }
@@ -84,6 +146,51 @@ export class PostsService {
       name,
       count,
       description: `${name} series`,
+    }));
+  }
+
+  private async findAllEntities(): Promise<PostEntity[]> {
+    return this.postRepository.find({
+      relations: { translations: true },
+      order: { updatedAt: 'DESC' },
+    });
+  }
+
+  private toEntity(post: PublicPost): PostEntity {
+    return this.postRepository.create({
+      id: post.id,
+      slug: post.slug,
+      status: post.status,
+      seriesName: post.series,
+      tags: post.tags,
+      heroImage: post.heroImage,
+      translations: [this.toTranslation(post)],
+    });
+  }
+
+  private toTranslation(payload: Pick<PublicPost | CreatePostDto, 'locale' | 'title' | 'summary' | 'body'>): PostTranslationEntity {
+    const translation = new PostTranslationEntity();
+    translation.locale = payload.locale;
+    translation.title = payload.title;
+    translation.summary = payload.summary;
+    translation.body = payload.body;
+    return translation;
+  }
+
+  private toPublicPosts(post: PostEntity): PublicPost[] {
+    return post.translations.map((translation) => ({
+      id: post.id,
+      slug: post.slug,
+      locale: translation.locale,
+      title: translation.title,
+      summary: translation.summary,
+      body: translation.body,
+      tags: post.tags ?? [],
+      heroImage: post.heroImage,
+      updatedAt: post.updatedAt.toISOString().slice(0, 10),
+      published: post.status === 'published',
+      status: post.status,
+      series: post.seriesName,
     }));
   }
 }

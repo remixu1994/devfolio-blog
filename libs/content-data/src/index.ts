@@ -9,9 +9,288 @@ import type {
   FeaturedPayload,
   Locale,
   PublicPost,
+  ResumeProjectShowcase,
   ResumeProfile,
   TopicShowcase,
 } from '@devfolio-blog/shared-types';
+
+const afryShowcaseZh: ResumeProjectShowcase = {
+  id: 'afry-tcaweb',
+  slug: 'afry-tcaweb',
+  entryLabel: '查看作品展示',
+  collapseLabel: '收起作品展示',
+  defaultSectionKey: 'architecture',
+  sections: [
+    {
+      key: 'architecture',
+      title: '架构',
+      status: 'ready',
+      summary: '围绕 TCAWeb 的跨平台迁移，展示整体系统架构、核心调用时序、类关系与部署拓扑。',
+      blocks: [
+        {
+          type: 'image',
+          title: '系统架构图',
+          body:
+            '展示从 Windows PC GUI 与 WCF 旧链路，向 Web API / Web GUI 跨平台方案演进的双轨架构。重点体现 Windows、Linux 与 RT Process 之间的边界与消息路径。',
+          imageSrc: '/assets/resume/afry/pc_web_architecture.png',
+          imageAlt: 'TCAWeb system architecture overview',
+          caption: 'Legacy PC GUI and new web stack coexist during the transition.',
+        },
+        {
+          type: 'image',
+          title: '时序图',
+          body:
+            '整理 CpriConfigGetStatus 的典型交互流程，覆盖用户触发、平台逻辑查询、通信层转发、WCF/Linkx 下发以及事件回调注册。',
+          imageSrc: '/assets/resume/afry/pc-sequence.png',
+          imageAlt: 'TCAWeb sequence diagram',
+          caption: 'User request, status lookup, signal dispatch, and event registration flow.',
+        },
+        {
+          type: 'image',
+          title: '类图',
+          body: '梳理 WCF Cpri Helper、Config、Port 与 Alarm 之间的核心类依赖关系。',
+          imageSrc: '/assets/resume/afry/ClassDiagram.png',
+          imageAlt: 'TCAWeb 类图',
+        },
+        {
+          type: 'image',
+          title: '部署架构图',
+          body: '展示 Windows、Linux ARM、Linux x64 等多环境下的部署节点与网络拓扑。',
+          imageSrc: '/assets/resume/afry/Deployment_Architecture.png',
+          imageAlt: 'TCAWeb 部署架构图',
+        },
+      ],
+    },
+    {
+      key: 'testing',
+      title: '测试流程',
+      status: 'ready',
+      summary: '整理 WCF 到 Web API 迁移中的测试策略、环境矩阵与结果追踪。',
+      blocks: [
+        {
+          type: 'image',
+          title: '测试流程设计（一）',
+          body: '覆盖接口回归、共享契约验证、环境准备与用例分层。',
+          imageSrc: '/assets/resume/afry/test.png',
+          imageAlt: '测试流程设计第一部分',
+        },
+        {
+          type: 'image',
+          title: '测试流程设计（二）',
+          body: '覆盖失败定位流程与结果追踪。',
+          imageSrc: '/assets/resume/afry/test-2.png',
+          imageAlt: '测试流程设计第二部分',
+        },
+      ],
+    },
+    {
+      key: 'workflow',
+      title: '工作流',
+      status: 'ready',
+      summary: '展示团队协作中的 Git 分支策略与工作流程。',
+      blocks: [
+        {
+          type: 'image',
+          title: 'Git 工作流',
+          body: '展示团队协作中的 Git 分支策略与工作流程。',
+          imageSrc: '/assets/resume/afry/GitWorkflow.png',
+          imageAlt: 'Git 工作流',
+        },
+      ],
+    },
+    {
+      key: 'components',
+      title: '组件设计',
+      status: 'ready',
+      summary: '展示核心组件的架构设计，涵盖 Linx、Web Cache 等组件的职责与交互。',
+      blocks: [
+        {
+          type: 'image',
+          title: 'Linx 架构图',
+          body: '展示 Linx 组件职责、线程模型、消息订阅关系与 Gateway 交互细节。',
+          imageSrc: '/assets/resume/afry/linx_architechure.png',
+          imageAlt: 'Linx 架构图',
+        },
+        {
+          type: 'image',
+          title: 'Web Cache 设计',
+          body: '展示 Web Cache 的缓存策略与数据流设计。',
+          imageSrc: '/assets/resume/afry/CacheDesign.png',
+          imageAlt: 'Web Cache 设计',
+        },
+      ],
+    },
+    {
+      key: 'ci-cm',
+      title: 'CI&CM',
+      status: 'ready',
+      summary: '展示持续集成与配置管理流程，涵盖 Gerrit、Jenkins、Artifactory 与打包链路。',
+      blocks: [
+        {
+          type: 'image',
+          title: 'CI&CM 流程',
+          body: '展示构建触发、制品发布、版本命名与交付包输出流程。',
+          imageSrc: '/assets/resume/afry/CI&CM.png',
+          imageAlt: 'CI&CM 流程图',
+        },
+      ],
+    },
+    {
+      key: 'secure-upgrade',
+      title: 'Secure Upgrade',
+      status: 'ready',
+      summary: '展示安全升级方案的设计与实现。',
+      blocks: [
+        {
+          type: 'image',
+          title: 'Secure Upgrade 方案',
+          body: '展示安全升级的流程设计与关键环节。',
+          imageSrc: '/assets/resume/afry/secure.png',
+          imageAlt: 'Secure Upgrade 方案',
+        },
+      ],
+    },
+  ],
+};
+
+const afryShowcaseEn: ResumeProjectShowcase = {
+  id: 'afry-tcaweb',
+  slug: 'afry-tcaweb',
+  entryLabel: 'View showcase',
+  collapseLabel: 'Hide showcase',
+  defaultSectionKey: 'architecture',
+  sections: [
+    {
+      key: 'architecture',
+      title: 'Architecture',
+      status: 'ready',
+      summary: 'Captures the TCAWeb migration through its overall architecture, sequence flow, class model, and deployment topology.',
+      blocks: [
+        {
+          type: 'image',
+          title: 'System architecture',
+          body:
+            'Shows the transition from the legacy Windows PC GUI and WCF chain to the cross-platform Web API and Web GUI solution across Windows, Linux, and RT process boundaries.',
+          imageSrc: '/assets/resume/afry/pc_web_architecture.png',
+          imageAlt: 'TCAWeb system architecture overview',
+          caption: 'Legacy PC GUI and new web stack coexist during the transition.',
+        },
+        {
+          type: 'image',
+          title: 'Sequence diagram',
+          body:
+            'Summarizes a representative CpriConfigGetStatus flow covering user entry, platform lookup, communication forwarding, WCF/Linkx dispatch, and event registration.',
+          imageSrc: '/assets/resume/afry/pc-sequence.png',
+          imageAlt: 'TCAWeb sequence diagram',
+          caption: 'User request, status lookup, signal dispatch, and event registration flow.',
+        },
+        {
+          type: 'image',
+          title: 'Class Architecture Diagram',
+          body: 'Captures the core class dependencies across WCF Cpri Helper, Config, Port, and Alarm components.',
+          imageSrc: '/assets/resume/afry/ClassDiagram.png',
+          imageAlt: 'TCAWeb class diagram',
+        },
+        {
+          type: 'image',
+          title: 'Deployment architecture',
+          body: 'Shows deployment nodes and network topology across Windows, Linux ARM, and Linux x64 environments.',
+          imageSrc: '/assets/resume/afry/Deployment_Architecture.png',
+          imageAlt: 'TCAWeb deployment architecture',
+        },
+      ],
+    },
+    {
+      key: 'testing',
+      title: 'Testing',
+      status: 'ready',
+      summary: 'Covers the testing strategy, environment matrix, and result tracking during WCF to Web API migration.',
+      blocks: [
+        {
+          type: 'image',
+          title: 'Test flow design (Part 1)',
+          body: 'Covers API regression, shared contract verification, environment setup, and test case layering.',
+          imageSrc: '/assets/resume/afry/test.png',
+          imageAlt: 'Test flow design part 1',
+        },
+        {
+          type: 'image',
+          title: 'Test flow design (Part 2)',
+          body: 'Covers failure analysis flow and result tracking.',
+          imageSrc: '/assets/resume/afry/test-2.png',
+          imageAlt: 'Test flow design part 2',
+        },
+      ],
+    },
+    {
+      key: 'workflow',
+      title: 'Workflow',
+      status: 'ready',
+      summary: 'Shows the Git branching strategy and workflow used in team collaboration.',
+      blocks: [
+        {
+          type: 'image',
+          title: 'Git Workflow',
+          body: 'Shows the Git branching strategy and workflow used in team collaboration.',
+          imageSrc: '/assets/resume/afry/GitWorkflow.png',
+          imageAlt: 'Git workflow',
+        },
+      ],
+    },
+    {
+      key: 'components',
+      title: 'Components',
+      status: 'ready',
+      summary: 'Shows core component architecture designs including Linx and Web Cache.',
+      blocks: [
+        {
+          type: 'image',
+          title: 'Linx Architecture',
+          body: 'Shows component responsibilities, thread model, message subscriptions, and gateway interactions.',
+          imageSrc: '/assets/resume/afry/linx_architechure.png',
+          imageAlt: 'Linx architecture diagram',
+        },
+        {
+          type: 'image',
+          title: 'Web Cache Design',
+          body: 'Shows the caching strategy and data flow design for Web Cache.',
+          imageSrc: '/assets/resume/afry/CacheDesign.png',
+          imageAlt: 'Web cache design',
+        },
+      ],
+    },
+    {
+      key: 'ci-cm',
+      title: 'CI&CM',
+      status: 'ready',
+      summary: 'Shows the CI and configuration management workflow covering Gerrit, Jenkins, Artifactory, and packaging.',
+      blocks: [
+        {
+          type: 'image',
+          title: 'CI&CM Workflow',
+          body: 'Shows build triggers, artifact publishing, versioning, and package output flow.',
+          imageSrc: '/assets/resume/afry/CI&CM.png',
+          imageAlt: 'CI&CM workflow diagram',
+        },
+      ],
+    },
+    {
+      key: 'secure-upgrade',
+      title: 'Secure Upgrade',
+      status: 'ready',
+      summary: 'Shows the secure upgrade solution design and implementation.',
+      blocks: [
+        {
+          type: 'image',
+          title: 'Secure Upgrade Solution',
+          body: 'Shows the secure upgrade process design and key components.',
+          imageSrc: '/assets/resume/afry/secure.png',
+          imageAlt: 'Secure upgrade solution',
+        },
+      ],
+    },
+  ],
+};
 
 export const resumeProfiles: Record<Locale, ResumeProfile> = {
   zh: {
@@ -43,6 +322,7 @@ export const resumeProfiles: Record<Locale, ResumeProfile> = {
         period: '2023-10 - 至今',
         summary: '为嵌入式系统设计并交付跨平台 Web 服务架构，支持 Linux ARM、Linux x64 与 Windows 环境。',
         stack: ['ASP.NET Core', 'REST API', 'Blazor', 'WCF'],
+        showcase: afryShowcaseZh,
         highlights: [
           '开发 ASP.NET Core RESTful API 与基于 Blazor 的 Web GUI，并沉淀可复用前端组件。',
           '设计内部 HTTPS/SSL 证书签发方案，用于内部环境下的安全通信。',
@@ -206,6 +486,9 @@ export const resumeProfiles: Record<Locale, ResumeProfile> = {
       education: '教育经历',
       languages: '语言能力',
       focus: '聚焦方向',
+      showcaseReady: '已整理',
+      showcaseComingSoon: '待补充',
+      openImage: '查看原图',
     },
     focus: '企业级系统、架构设计、全栈交付与 AI 辅助工程。',
     drivingLicense: 'C',
@@ -239,6 +522,7 @@ export const resumeProfiles: Record<Locale, ResumeProfile> = {
         period: '2023-10 - Present',
         summary: 'Designed a cross-platform web service architecture for embedded systems, supporting Linux ARM, Linux x64, and Windows environments.',
         stack: ['ASP.NET Core', 'REST API', 'Blazor', 'WCF'],
+        showcase: afryShowcaseEn,
         highlights: [
           'Developed ASP.NET Core RESTful APIs and a Blazor-based web GUI with reusable frontend components.',
           'Designed an internal HTTPS/SSL certificate issuance solution for secure communication in internal environments.',
@@ -396,6 +680,9 @@ export const resumeProfiles: Record<Locale, ResumeProfile> = {
       education: 'Education',
       languages: 'Languages',
       focus: 'Focus',
+      showcaseReady: 'Ready',
+      showcaseComingSoon: 'Coming soon',
+      openImage: 'Open image',
     },
     focus: 'Enterprise systems, architecture, full-stack delivery, and AI-assisted engineering.',
     drivingLicense: 'C',
@@ -411,10 +698,10 @@ export const architectureCases: Record<Locale, ArchitectureCase[]> = {
       summary: '拆分编辑、发布、鉴权和媒体处理边界，让团队能并行交付。',
       heroImage: '/assets/architecture/content-platform.svg',
       updatedAt: '2026-05-14',
-      tags: ['NestJS', 'TypeORM', 'Microservices'],
+      tags: ['模块化架构', 'API 契约', '微服务'],
       published: true,
       challenge: '旧系统耦合严重，发布链路和权限逻辑互相缠绕。',
-      stack: ['Nx', 'NestJS', 'PostgreSQL', 'TypeORM', 'Angular'],
+      stack: ['模块化服务', '内容发布', '权限边界', '媒体处理'],
       outcomes: ['发布效率提升', '模块依赖收敛', 'API 契约更稳定'],
       body: `## 设计目标
 
@@ -433,10 +720,10 @@ export const architectureCases: Record<Locale, ArchitectureCase[]> = {
       summary: '通过聚合层把离散服务指标编排成单一业务视图。',
       heroImage: '/assets/architecture/observability.svg',
       updatedAt: '2026-05-10',
-      tags: ['Angular', 'API Design', 'Observability'],
+      tags: ['聚合接口', '业务视图', '可观测性'],
       published: true,
       challenge: '多个服务各自暴露指标，前端拼装成本高且不稳定。',
-      stack: ['Angular', 'NestJS', 'Redis', 'PostgreSQL'],
+      stack: ['指标聚合', '缓存策略', '业务告警', '运营看板'],
       outcomes: ['首屏响应更稳定', '前端查询数下降', '指标语义统一'],
       body: `## 聚合策略
 
@@ -451,10 +738,10 @@ export const architectureCases: Record<Locale, ArchitectureCase[]> = {
       summary: 'Separated editing, publishing, auth, and media concerns so teams could ship in parallel.',
       heroImage: '/assets/architecture/content-platform.svg',
       updatedAt: '2026-05-14',
-      tags: ['NestJS', 'TypeORM', 'Microservices'],
+      tags: ['Modular Architecture', 'API Contracts', 'Microservices'],
       published: true,
       challenge: 'The legacy stack mixed publishing, permissions, and media behavior in one place.',
-      stack: ['Nx', 'NestJS', 'PostgreSQL', 'TypeORM', 'Angular'],
+      stack: ['Modular services', 'Publishing workflow', 'Permission boundaries', 'Media processing'],
       outcomes: ['Faster releases', 'Clearer boundaries', 'More reliable API contracts'],
       body: `## Goals
 
@@ -469,10 +756,10 @@ export const architectureCases: Record<Locale, ArchitectureCase[]> = {
       summary: 'Introduced an aggregation layer that turned fragmented metrics into one business-facing view.',
       heroImage: '/assets/architecture/observability.svg',
       updatedAt: '2026-05-10',
-      tags: ['Angular', 'API Design', 'Observability'],
+      tags: ['API Aggregation', 'Business View', 'Observability'],
       published: true,
       challenge: 'Metrics lived in separate services and forced the frontend to stitch everything together.',
-      stack: ['Angular', 'NestJS', 'Redis', 'PostgreSQL'],
+      stack: ['Metric aggregation', 'Caching strategy', 'Business alerts', 'Operations dashboard'],
       outcomes: ['Steadier first paint', 'Fewer frontend requests', 'Clearer metric semantics'],
       body: `## Aggregation strategy
 
@@ -591,17 +878,17 @@ The goal is a durable coaching experience, not a throwaway AI demo.`,
 export const seedPosts: PublicPost[] = [
   {
     id: 'post-1',
-    slug: 'nx-monorepo-for-content-platforms',
+    slug: 'modular-boundaries-for-content-platforms',
     locale: 'zh',
-    title: '为什么内容平台适合用 Nx Monorepo',
-    summary: '从共享类型、统一构建和跨应用协作的角度总结 Nx 的实际收益。',
-    heroImage: '/assets/blog/nx-monorepo.svg',
+    title: '内容平台的模块化边界设计',
+    summary: '从编辑、发布、权限和媒体处理的职责拆分，梳理内容平台演进中的关键边界。',
+    heroImage: '/assets/architecture/content-platform.svg',
     updatedAt: '2026-05-13',
-    tags: ['Nx', 'Monorepo', 'Angular', 'NestJS'],
+    tags: ['模块化架构', '内容平台', '服务边界'],
     published: true,
     body: `## 核心原因
 
-当站点、后台、API 和共享模型需要一起演进时，Monorepo 能显著降低协作摩擦。`,
+当编辑、发布、权限和媒体处理同时演进时，先把职责边界梳理清楚，能显著降低后续协作与交付成本。`,
     status: 'published',
     series: 'engineering-foundations',
   },

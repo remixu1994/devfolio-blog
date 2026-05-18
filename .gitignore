@@ -8,6 +8,8 @@ dist
 .npm-cache
 storage/media/*
 !storage/media/.gitkeep
+storage/*.sqlite
+storage/*.sqlite-*
 runtime-logs
 .playwright-mcp
 devfolio-home.png

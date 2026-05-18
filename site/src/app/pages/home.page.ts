@@ -10,30 +10,30 @@ import { getHomeViewModel, getLocale } from '../site-content';
   imports: [RouterLink, SectionCardComponent, TopicLaneComponent],
   template: `
     <section class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-      <div class="overflow-hidden rounded-[40px] border border-[color:var(--border-color)] bg-[linear-gradient(135deg,rgba(255,250,243,0.96),rgba(234,239,247,0.94))] p-8 shadow-[0_26px_80px_rgba(23,24,28,0.1)] md:p-10">
-        <div class="flex flex-wrap items-center gap-3">
+      <div class="overflow-hidden border border-[color:var(--border-color)] bg-[rgba(255,250,243,0.96)] p-6 shadow-[0_16px_44px_rgba(23,24,28,0.08)] sm:rounded-[28px] md:p-10 lg:bg-[linear-gradient(135deg,rgba(255,250,243,0.96),rgba(234,239,247,0.94))] lg:shadow-[0_26px_80px_rgba(23,24,28,0.1)]">
+        <div class="hidden flex-wrap items-center gap-3 sm:flex">
           <span class="rounded-full bg-[color:var(--ink)] px-4 py-2 font-[var(--font-mono)] text-[10px] uppercase tracking-[0.35em] text-white">
-            Full-stack Operator
+            Product-minded Engineer
           </span>
           <span class="rounded-full bg-[color:var(--highlight-soft)] px-4 py-2 font-[var(--font-mono)] text-[10px] uppercase tracking-[0.35em] text-[color:var(--highlight)]">
-            Angular / NestJS / Nx
+            Architecture / Delivery / Reliability
           </span>
         </div>
 
-        <div class="mt-8 max-w-4xl">
-          <p class="font-[var(--font-mono)] text-xs uppercase tracking-[0.35em] text-[color:var(--accent)]">Moon Devfolio</p>
-          <h1 class="mt-4 font-[var(--font-display)] text-5xl font-semibold leading-[0.95] text-[color:var(--ink)] md:text-7xl">
+        <div class="max-w-4xl sm:mt-8">
+          <p class="font-[var(--font-mono)] text-[11px] uppercase tracking-[0.3em] text-[color:var(--accent)] sm:text-xs sm:tracking-[0.35em]">Moon Devfolio</p>
+          <h1 class="mt-4 font-[var(--font-display)] text-[1.82rem] font-semibold leading-[1.18] text-[color:var(--ink)] sm:text-4xl md:text-7xl md:leading-[0.95]">
             {{ viewModel().dictionary.home.heroTitle }}
           </h1>
-          <p class="mt-6 max-w-2xl text-base leading-8 text-[color:var(--muted)] md:text-lg">
+          <p class="mt-5 max-w-2xl text-sm leading-7 text-[color:var(--muted)] md:mt-6 md:text-lg md:leading-8">
             {{ viewModel().dictionary.home.heroBody }}
           </p>
         </div>
 
-        <div class="mt-10 grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
-          <div class="grid gap-4 sm:grid-cols-3">
+        <div class="mt-7 grid gap-4 md:mt-10 md:grid-cols-[1fr_auto] md:items-end">
+          <div class="hidden gap-4 sm:grid sm:grid-cols-3">
             @for (metric of viewModel().featured.metrics; track metric.label) {
-              <div class="rounded-[24px] border border-[color:var(--border-color)] bg-[rgba(255,255,255,0.68)] p-4">
+              <div class="rounded-[18px] border border-[color:var(--border-color)] bg-[rgba(255,255,255,0.68)] p-4 md:rounded-[24px]">
                 <p class="font-[var(--font-mono)] text-[10px] uppercase tracking-[0.3em] text-[color:var(--muted)]">
                   {{ metric.label }}
                 </p>
@@ -45,7 +45,7 @@ import { getHomeViewModel, getLocale } from '../site-content';
           <div class="flex flex-wrap gap-3">
             <a
               [routerLink]="['/', locale(), 'architecture']"
-              class="rounded-full bg-[color:var(--ink)] px-5 py-3 text-sm font-medium text-white"
+              class="rounded-full bg-[color:var(--accent)] px-5 py-3 text-sm font-medium text-white shadow-[0_12px_28px_rgba(15,91,216,0.18)] transition hover:bg-[color:var(--accent-strong)]"
             >
               {{ viewModel().dictionary.home.featuredLabel }}
             </a>
@@ -59,7 +59,7 @@ import { getHomeViewModel, getLocale } from '../site-content';
         </div>
       </div>
 
-      <div class="grid gap-6">
+      <div class="hidden gap-6 lg:grid">
         <df-section-card
           eyebrow="Architecture Radar"
           [title]="viewModel().dictionary.home.contactLabel"
@@ -73,7 +73,7 @@ import { getHomeViewModel, getLocale } from '../site-content';
             <div class="rounded-[22px] border border-[color:var(--border-color)] bg-white/70 px-4 py-4">
               <p class="font-[var(--font-mono)] text-[10px] uppercase tracking-[0.3em] text-[color:var(--muted)]">Themes</p>
               <p class="mt-2 text-sm leading-7 text-[color:var(--muted)]">
-                Monorepo engineering, service boundaries, observability, self-hosted runtime, and AI product loops.
+                Service boundaries, observability, delivery quality, self-hosted operations, and AI product loops.
               </p>
             </div>
           </div>
@@ -81,7 +81,7 @@ import { getHomeViewModel, getLocale } from '../site-content';
 
         <div class="rounded-[32px] border border-[color:var(--border-color)] bg-[linear-gradient(160deg,rgba(16,25,42,0.94),rgba(10,46,115,0.88))] p-6 text-white shadow-[0_22px_60px_rgba(15,24,46,0.22)]">
           <p class="font-[var(--font-mono)] text-[10px] uppercase tracking-[0.3em] text-white/60">Live Focus</p>
-          <h2 class="mt-3 font-[var(--font-display)] text-3xl font-semibold">Building a personal engineering media stack</h2>
+          <h2 class="mt-3 font-[var(--font-display)] text-3xl font-semibold">Building a personal engineering knowledge base</h2>
           <div class="mt-5 grid gap-3">
             <div class="flex items-start justify-between gap-4 rounded-[20px] border border-white/10 bg-white/5 px-4 py-4">
               <div>
@@ -109,12 +109,12 @@ import { getHomeViewModel, getLocale } from '../site-content';
       </div>
     </section>
 
-    <section class="mt-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-      <div class="rounded-[36px] border border-[color:var(--border-color)] bg-[rgba(255,249,240,0.8)] p-6 md:p-8">
+    <section class="mt-8 grid gap-6 lg:mt-10 lg:grid-cols-[1.1fr_0.9fr]">
+      <div class="border border-[color:var(--border-color)] bg-[rgba(255,249,240,0.8)] p-5 sm:rounded-[28px] md:p-8 lg:rounded-[36px]">
         <div class="flex items-center justify-between gap-4">
           <div>
-            <p class="font-[var(--font-mono)] text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">Featured Work</p>
-            <h2 class="mt-3 font-[var(--font-display)] text-3xl font-semibold">{{ viewModel().dictionary.home.featuredLabel }}</h2>
+            <p class="font-[var(--font-mono)] text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)] md:text-xs md:tracking-[0.32em]">Featured Work</p>
+            <h2 class="mt-2 font-[var(--font-display)] text-2xl font-semibold md:mt-3 md:text-3xl">{{ viewModel().dictionary.home.featuredLabel }}</h2>
           </div>
           <a [routerLink]="['/', locale(), 'architecture']" class="text-sm text-[color:var(--accent)]">
             {{ viewModel().dictionary.nav.architecture }}
@@ -125,21 +125,21 @@ import { getHomeViewModel, getLocale } from '../site-content';
           @for (item of viewModel().featured.featuredCases; track item.slug) {
             <a
               [routerLink]="['/', locale(), 'architecture', item.slug]"
-              class="grid gap-4 rounded-[28px] border border-[color:var(--border-color)] bg-white/80 p-5 transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(23,24,28,0.08)] md:grid-cols-[auto_1fr_auto]"
+              class="grid gap-4 border-b border-[color:var(--border-color)] bg-white/70 px-0 py-5 transition last:border-b-0 hover:bg-white md:rounded-[28px] md:border md:bg-white/80 md:p-5 md:hover:-translate-y-1 md:hover:shadow-[0_18px_40px_rgba(23,24,28,0.08)] lg:grid-cols-[auto_1fr_auto]"
             >
-              <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-[color:var(--accent-soft)] font-[var(--font-mono)] text-sm uppercase tracking-[0.25em] text-[color:var(--accent)]">
+              <div class="hidden h-14 w-14 items-center justify-center rounded-2xl bg-[color:var(--accent-soft)] font-[var(--font-mono)] text-sm uppercase tracking-[0.25em] text-[color:var(--accent)] md:flex">
                 0{{ $index + 1 }}
               </div>
               <div>
-                <h3 class="text-2xl font-semibold text-[color:var(--ink)]">{{ item.title }}</h3>
+                <h3 class="text-xl font-semibold leading-snug text-[color:var(--ink)] md:text-2xl">{{ item.title }}</h3>
                 <p class="mt-2 text-sm leading-7 text-[color:var(--muted)]">{{ item.summary }}</p>
-                <div class="mt-4 flex flex-wrap gap-2">
+                <div class="mt-4 hidden flex-wrap gap-2 sm:flex">
                   @for (tag of item.tags; track tag) {
                     <span class="rounded-full bg-[color:var(--accent-soft)] px-3 py-1 text-xs text-[color:var(--accent)]">{{ tag }}</span>
                   }
                 </div>
               </div>
-              <div class="flex items-start justify-end">
+              <div class="hidden items-start justify-end md:flex">
                 <span class="rounded-full bg-[color:var(--highlight-soft)] px-3 py-1 font-[var(--font-mono)] text-[10px] uppercase tracking-[0.28em] text-[color:var(--highlight)]">
                   {{ item.updatedAt }}
                 </span>
@@ -149,7 +149,7 @@ import { getHomeViewModel, getLocale } from '../site-content';
         </div>
       </div>
 
-      <div class="rounded-[36px] border border-[color:var(--border-color)] bg-[linear-gradient(180deg,rgba(255,255,255,0.74),rgba(255,246,232,0.82))] p-6 md:p-8">
+      <div class="hidden rounded-[36px] border border-[color:var(--border-color)] bg-[linear-gradient(180deg,rgba(255,255,255,0.74),rgba(255,246,232,0.82))] p-6 md:p-8 lg:block">
         <p class="font-[var(--font-mono)] text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">Topic Lanes</p>
         <h2 class="mt-3 font-[var(--font-display)] text-3xl font-semibold">A blog shaped by systems, not categories</h2>
         <div class="mt-6 grid gap-5">
@@ -166,11 +166,11 @@ import { getHomeViewModel, getLocale } from '../site-content';
       </div>
     </section>
 
-    <section class="mt-10 border border-[color:var(--border-color)] bg-white">
-      <div class="flex flex-wrap items-end justify-between gap-4 border-b border-[color:var(--border-color)] px-6 py-6 md:px-8">
+    <section class="mt-8 border border-[color:var(--border-color)] bg-white lg:mt-10">
+      <div class="flex flex-wrap items-end justify-between gap-4 border-b border-[color:var(--border-color)] px-5 py-5 md:px-8 md:py-6">
         <div>
-          <p class="font-[var(--font-mono)] text-xs uppercase tracking-[0.32em] text-[color:var(--muted)]">Recent Writing</p>
-          <h2 class="mt-3 font-[var(--font-display)] text-3xl font-semibold">{{ viewModel().dictionary.home.recentLabel }}</h2>
+          <p class="font-[var(--font-mono)] text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)] md:text-xs md:tracking-[0.32em]">Recent Writing</p>
+          <h2 class="mt-2 font-[var(--font-display)] text-2xl font-semibold md:mt-3 md:text-3xl">{{ viewModel().dictionary.home.recentLabel }}</h2>
         </div>
         <a [routerLink]="['/', locale(), 'blog']" class="text-sm text-[color:var(--accent)]">
           {{ viewModel().dictionary.nav.blog }}
@@ -182,18 +182,18 @@ import { getHomeViewModel, getLocale } from '../site-content';
           @for (post of viewModel().featured.recentPosts; track post.id) {
             <a
               [routerLink]="['/', locale(), 'blog', post.slug]"
-              class="grid gap-4 px-6 py-6 transition hover:bg-[color:var(--panel)] md:grid-cols-[8rem_minmax(0,1fr)] md:px-8"
+              class="grid gap-3 px-5 py-5 transition hover:bg-[color:var(--panel)] md:grid-cols-[8rem_minmax(0,1fr)] md:px-8 md:py-6"
             >
-              <div class="font-[var(--font-mono)] text-[10px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
+              <div class="flex flex-wrap gap-x-3 gap-y-1 font-[var(--font-mono)] text-[10px] uppercase tracking-[0.22em] text-[color:var(--muted)] md:block md:tracking-[0.28em]">
                 <p>{{ post.updatedAt }}</p>
                 @if (post.series) {
-                  <p class="mt-2 text-[color:var(--accent)]">{{ post.series }}</p>
+                  <p class="text-[color:var(--accent)] md:mt-2">{{ post.series }}</p>
                 }
               </div>
               <div>
-                <h3 class="text-2xl font-semibold leading-snug text-[color:var(--ink)]">{{ post.title }}</h3>
+                <h3 class="text-xl font-semibold leading-snug text-[color:var(--ink)] md:text-2xl">{{ post.title }}</h3>
                 <p class="mt-2 text-sm leading-7 text-[color:var(--muted)]">{{ post.summary }}</p>
-                <div class="mt-4 flex flex-wrap gap-x-3 gap-y-2 text-xs text-[color:var(--muted)]">
+                <div class="mt-4 hidden flex-wrap gap-x-3 gap-y-2 text-xs text-[color:var(--muted)] sm:flex">
                   @for (tag of post.tags; track tag) {
                     <span>{{ tag }}</span>
                   }
@@ -203,7 +203,7 @@ import { getHomeViewModel, getLocale } from '../site-content';
           }
         </div>
 
-        <aside class="border-t border-[color:var(--border-color)] bg-[rgba(255,252,246,0.84)] p-6 lg:border-l lg:border-t-0 md:p-8">
+        <aside class="hidden border-t border-[color:var(--border-color)] bg-[rgba(255,252,246,0.84)] p-6 lg:block lg:border-l lg:border-t-0 md:p-8">
           <p class="font-[var(--font-mono)] text-xs uppercase tracking-[0.3em] text-[color:var(--muted)]">Topics</p>
           <div class="mt-4 flex flex-wrap gap-2">
             @for (topic of viewModel().blogTopics; track topic.name) {

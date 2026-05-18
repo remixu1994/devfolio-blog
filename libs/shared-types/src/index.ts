@@ -36,6 +36,36 @@ export interface ResumeProject {
   summary: string;
   stack: string[];
   highlights: string[];
+  showcase?: ResumeProjectShowcase;
+}
+
+export type ResumeProjectShowcaseBlockType = 'image' | 'text' | 'placeholder';
+export type ResumeProjectShowcaseSectionStatus = 'ready' | 'placeholder';
+
+export interface ResumeProjectShowcaseBlock {
+  type: ResumeProjectShowcaseBlockType;
+  title: string;
+  body?: string;
+  imageSrc?: string;
+  imageAlt?: string;
+  caption?: string;
+}
+
+export interface ResumeProjectShowcaseSection {
+  key: string;
+  title: string;
+  status: ResumeProjectShowcaseSectionStatus;
+  summary: string;
+  blocks: ResumeProjectShowcaseBlock[];
+}
+
+export interface ResumeProjectShowcase {
+  id: string;
+  slug: string;
+  entryLabel: string;
+  collapseLabel: string;
+  defaultSectionKey: string;
+  sections: ResumeProjectShowcaseSection[];
 }
 
 export interface ResumeEducation {
@@ -62,6 +92,9 @@ export interface ResumeLabels {
   education: string;
   languages: string;
   focus: string;
+  showcaseReady: string;
+  showcaseComingSoon: string;
+  openImage: string;
 }
 
 export interface ResumeProfile {
