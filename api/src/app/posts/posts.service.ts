@@ -1,6 +1,6 @@
 import { seedPosts } from '@devfolio-blog/content-data';
 import type { CreatePostDto, Locale, PublicPost, SeriesSummary, TagSummary, UpdatePostDto } from '@devfolio-blog/shared-types';
-import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PostTranslationEntity } from './entities/post-translation.entity';
@@ -89,11 +89,15 @@ export class PostsService implements OnModuleInit {
     let translation = current.translations.find((item) => item.locale === locale);
 
     if (!translation) {
+      if (payload.title === undefined || payload.summary === undefined || payload.body === undefined) {
+        throw new BadRequestException('Creating a new translation requires title, summary, and body.');
+      }
+
       translation = this.toTranslation({
         locale,
-        title: payload.title ?? '',
-        summary: payload.summary ?? '',
-        body: payload.body ?? '',
+        title: payload.title,
+        summary: payload.summary,
+        body: payload.body,
       });
       current.translations.push(translation);
     } else {
