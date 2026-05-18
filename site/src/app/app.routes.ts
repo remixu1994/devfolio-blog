@@ -4,6 +4,7 @@ import { HomePageComponent } from './pages/home.page';
 import { ResumePageComponent } from './pages/resume.page';
 import { ArchitectureListPageComponent } from './pages/architecture-list.page';
 import { ArchitectureDetailPageComponent } from './pages/architecture-detail.page';
+import { BooksPageComponent } from './pages/books.page';
 import { TopicPageComponent } from './pages/topic.page';
 import { BlogListPageComponent } from './pages/blog-list.page';
 import { BlogDetailPageComponent } from './pages/blog-detail.page';
@@ -22,6 +23,7 @@ export const appRoutes: Route[] = [
       { path: 'resume', component: ResumePageComponent },
       { path: 'architecture', component: ArchitectureListPageComponent },
       { path: 'architecture/:slug', component: ArchitectureDetailPageComponent },
+      { path: 'books', component: BooksPageComponent },
       { path: 'unraid', component: TopicPageComponent, data: { slug: 'unraid' } },
       { path: 'fitness-ai-agent', component: TopicPageComponent, data: { slug: 'fitness-ai-agent' } },
       { path: 'blog', component: BlogListPageComponent },

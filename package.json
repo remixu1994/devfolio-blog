@@ -6,9 +6,10 @@
   "scripts": {
     "nx": "node .nx/nxw.js",
     "start:site": "node .nx/nxw.js serve site",
+    "start:site:hmr": "node .nx/nxw.js serve site --configuration=development",
     "start:admin": "node .nx/nxw.js serve admin",
     "start:api": "node .nx/nxw.js serve api",
-    "preview:site": "node tools/static-preview-server.mjs dist/site/browser 4200",
+    "preview:site": "node tools/static-preview-server.mjs dist/site/browser 4210",
     "preview:admin": "node tools/static-preview-server.mjs dist/admin/browser 4300",
     "build": "node .nx/nxw.js run-many -t build",
     "test": "node .nx/nxw.js run-many -t test",

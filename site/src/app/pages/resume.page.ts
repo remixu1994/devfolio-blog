@@ -1,8 +1,17 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import type { ResumeProject, ResumeProjectShowcaseSection } from '@devfolio-blog/shared-types';
+import type {
+  ResumeProject,
+  ResumeProjectShowcaseBlock,
+  ResumeProjectShowcaseSection,
+} from '@devfolio-blog/shared-types';
 import { getLocale, getResumeViewModel } from '../site-content';
+
+interface ShowcaseBlockGroup {
+  key: string;
+  blocks: ResumeProjectShowcaseBlock[];
+}
 
 @Component({
   standalone: true,
@@ -252,7 +261,7 @@ import { getLocale, getResumeViewModel } from '../site-content';
               <button
                 type="button"
                 (click)="closeShowcase()"
-                class="rounded-full border border-[color:var(--border-color)] px-4 py-2 text-sm font-medium text-[color:var(--muted)] transition hover:border-[color:var(--accent)] hover:text-[color:var(--accent)]"
+                class="shrink-0 whitespace-nowrap rounded-full border border-[color:var(--border-color)] px-4 py-2 text-sm font-medium text-[color:var(--muted)] transition hover:border-[color:var(--accent)] hover:text-[color:var(--accent)]"
               >
                 {{ showcase.collapseLabel }}
               </button>
@@ -299,54 +308,70 @@ import { getLocale, getResumeViewModel } from '../site-content';
               </div>
 
               <div class="mt-6 grid gap-5">
-                @for (block of activeSection.blocks; track block.title + block.type) {
-                  @if (block.type === 'image' && block.imageSrc; as imageSrc) {
-                    <article class="border border-[color:var(--border-color)] bg-white p-4 md:p-5">
-                      <div class="flex flex-wrap items-center justify-between gap-3">
-                        <h4 class="text-lg font-semibold text-[color:var(--ink)]">{{ block.title }}</h4>
-                        <a
-                          [href]="imageSrc"
-                          target="_blank"
-                          rel="noreferrer"
-                          class="text-sm font-medium text-[color:var(--accent)]"
-                        >
-                          {{ viewModel().resume.labels.openImage }}
-                        </a>
-                      </div>
-                      @if (block.body) {
-                        <p class="mt-3 text-sm leading-7 text-[color:var(--muted)]">{{ block.body }}</p>
+                @for (group of groupedShowcaseBlocks(activeSection); track group.key) {
+                  <article class="border border-[color:var(--border-color)] bg-white p-4 md:p-5">
+                    <div class="grid gap-5">
+                      @for (block of group.blocks; track block.title + block.type) {
+                        <section class="first:pt-0" [class]="!$first ? 'border-t border-[color:var(--border-color)] pt-5' : ''">
+                          @if (block.type === 'image' && block.imageSrc; as imageSrc) {
+                            <div class="flex flex-wrap items-center justify-between gap-3">
+                              <h4 class="text-lg font-semibold text-[color:var(--ink)]">{{ block.title }}</h4>
+                              <button
+                                type="button"
+                                (click)="openImagePreview(imageSrc)"
+                                class="text-sm font-medium text-[color:var(--accent)] transition hover:text-[color:var(--ink)]"
+                              >
+                                {{ viewModel().resume.labels.openImage }}
+                              </button>
+                            </div>
+                            @if (block.body) {
+                              <p class="mt-3 text-sm leading-7 text-[color:var(--muted)]">{{ block.body }}</p>
+                            }
+                            <div class="group relative mt-4 overflow-hidden border border-[color:var(--border-color)] bg-[color:var(--panel)]">
+                              <img [src]="imageSrc" [alt]="block.imageAlt || block.title" class="w-full object-cover" />
+                              <button
+                                type="button"
+                                (click)="openImagePreview(imageSrc)"
+                                class="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-[color:var(--ink)]/72 text-white shadow-lg ring-1 ring-white/25 backdrop-blur transition duration-200 hover:scale-105 hover:bg-[color:var(--ink)]/84 max-md:opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100"
+                                aria-label="放大预览图片"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  class="h-5 w-5"
+                                >
+                                  <circle cx="11" cy="11" r="5" />
+                                  <path d="M20 20l-4.2-4.2" />
+                                  <path d="M11 8.5v5" />
+                                  <path d="M8.5 11h5" />
+                                </svg>
+                              </button>
+                            </div>
+                            @if (block.caption) {
+                              <p class="mt-3 text-xs leading-6 text-[color:var(--muted)]">{{ block.caption }}</p>
+                            }
+                          } @else if (block.type === 'text') {
+                            <h4 class="text-lg font-semibold text-[color:var(--ink)]">{{ block.title }}</h4>
+                            @if (block.body) {
+                              <p class="mt-3 whitespace-pre-line text-sm leading-7 text-[color:var(--muted)]">{{ block.body }}</p>
+                            }
+                          } @else {
+                            <div class="border border-dashed border-[color:var(--border-color)] bg-[rgba(255,252,246,0.86)] p-4">
+                              <h4 class="text-lg font-semibold text-[color:var(--ink)]">{{ block.title }}</h4>
+                              @if (block.body) {
+                                <p class="mt-3 text-sm leading-7 text-[color:var(--muted)]">{{ block.body }}</p>
+                              }
+                            </div>
+                          }
+                        </section>
                       }
-                      <div class="group relative mt-4 overflow-hidden border border-[color:var(--border-color)] bg-[color:var(--panel)]">
-                        <img [src]="imageSrc" [alt]="block.imageAlt || block.title" class="w-full object-cover" />
-                        <button
-                          type="button"
-                          (click)="openImagePreview(imageSrc)"
-                          class="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/50 text-white opacity-0 backdrop-blur transition group-hover:opacity-100"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
-                            <path d="M3.28 2.22a.75.75 0 0 0-1.06 1.06l1.25 1.25H5a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 0-.75.75v2.5a.75.75 0 0 0 1.5 0v-1.19l1.72 1.72a.75.75 0 1 0 1.06-1.06l-3-3ZM16.72 2.22a.75.75 0 0 1 1.06 1.06l-1.25 1.25H15a.75.75 0 0 0 0 1.5h2.25c.414 0 .75.336.75.75v2.5a.75.75 0 0 1-1.5 0v-1.19l-1.72 1.72a.75.75 0 1 1-1.06-1.06l3-3ZM3.28 17.78a.75.75 0 0 1-1.06-1.06l1.25-1.25H5a.75.75 0 0 0 0-1.5H2.75a.75.75 0 0 1-.75-.75v-2.5a.75.75 0 0 1 1.5 0v1.19l1.72-1.72a.75.75 0 1 1 1.06 1.06l-3 3ZM16.72 17.78a.75.75 0 0 0 1.06-1.06l-1.25-1.25H15a.75.75 0 0 1 0-1.5h2.25c.414 0 .75-.336.75-.75v-2.5a.75.75 0 0 0-1.5 0v1.19l-1.72-1.72a.75.75 0 1 0-1.06 1.06l3 3Z" />
-                          </svg>
-                        </button>
-                      </div>
-                      @if (block.caption) {
-                        <p class="mt-3 text-xs leading-6 text-[color:var(--muted)]">{{ block.caption }}</p>
-                      }
-                    </article>
-                  } @else if (block.type === 'text') {
-                    <article class="border border-[color:var(--border-color)] bg-white p-4 md:p-5">
-                      <h4 class="text-lg font-semibold text-[color:var(--ink)]">{{ block.title }}</h4>
-                      @if (block.body) {
-                        <p class="mt-3 whitespace-pre-line text-sm leading-7 text-[color:var(--muted)]">{{ block.body }}</p>
-                      }
-                    </article>
-                  } @else {
-                    <article class="border border-dashed border-[color:var(--border-color)] bg-[rgba(255,252,246,0.86)] p-4 md:p-5">
-                      <h4 class="text-lg font-semibold text-[color:var(--ink)]">{{ block.title }}</h4>
-                      @if (block.body) {
-                        <p class="mt-3 text-sm leading-7 text-[color:var(--muted)]">{{ block.body }}</p>
-                      }
-                    </article>
-                  }
+                    </div>
+                  </article>
                 }
               </div>
             }
@@ -472,5 +497,26 @@ export class ResumePageComponent {
 
   activeSectionSummary() {
     return this.activeShowcaseSection()?.summary ?? '';
+  }
+
+  groupedShowcaseBlocks(section: ResumeProjectShowcaseSection): ShowcaseBlockGroup[] {
+    const groups: ShowcaseBlockGroup[] = [];
+
+    for (const block of section.blocks) {
+      const groupKey = block.groupKey;
+      const previousGroup = groups[groups.length - 1];
+
+      if (groupKey && previousGroup?.key === groupKey) {
+        previousGroup.blocks.push(block);
+        continue;
+      }
+
+      groups.push({
+        key: groupKey ?? `${block.type}-${block.title}`,
+        blocks: [block],
+      });
+    }
+
+    return groups;
   }
 }

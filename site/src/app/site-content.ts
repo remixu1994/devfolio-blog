@@ -1,6 +1,8 @@
 import {
   getArchitectureCase,
   getArchitectureCases,
+  getBookRecommendations,
+  getBooksModuleContent,
   getFeaturedPayload,
   getTopicBySlug,
   resumeProfiles,
@@ -23,6 +25,7 @@ export function getShellLinks(locale: Locale) {
     { label: dictionaries[locale].nav.home, href: withLocalePath(locale) },
     { label: dictionaries[locale].nav.resume, href: withLocalePath(locale, 'resume') },
     { label: dictionaries[locale].nav.architecture, href: withLocalePath(locale, 'architecture') },
+    { label: dictionaries[locale].nav.books, href: withLocalePath(locale, 'books') },
     { label: dictionaries[locale].nav.unraid, href: withLocalePath(locale, 'unraid') },
     { label: dictionaries[locale].nav.fitness, href: withLocalePath(locale, 'fitness-ai-agent') },
     { label: dictionaries[locale].nav.blog, href: withLocalePath(locale, 'blog') },
@@ -38,6 +41,7 @@ export function getHomeViewModel(locale: Locale) {
       ...getFeaturedPayload(locale),
       recentPosts: posts.slice(0, 3),
     },
+    books: getBooksHomeViewModel(locale),
     blogTopics: getBlogTopics(posts),
     blogSeries: getBlogSeries(posts),
   };
@@ -77,6 +81,21 @@ export function getTopicViewModel(locale: Locale, slug: string) {
         html: renderMarkdown(item.body),
       }
     : null;
+}
+
+export function getBooksViewModel(locale: Locale) {
+  const module = getBooksModuleContent(locale);
+  const books = getBookRecommendations(locale);
+
+  return {
+    dictionary: dictionaries[locale],
+    module,
+    featuredBooks: books.filter((book) => book.featured),
+    groupedBooks: module.groups.map((group) => ({
+      ...group,
+      books: books.filter((book) => book.category === group.category),
+    })),
+  };
 }
 
 export function getBlogListViewModel(locale: Locale) {
@@ -153,6 +172,17 @@ function getRelatedPosts(item: PublicPostSummary, posts: PublicPostSummary[]) {
     .sort((left, right) => right.score - left.score || right.post.updatedAt.localeCompare(left.post.updatedAt))
     .slice(0, 3)
     .map(({ post }) => post);
+}
+
+function getBooksHomeViewModel(locale: Locale) {
+  const module = getBooksModuleContent(locale);
+  const books = getBookRecommendations(locale).filter((book) => book.featured);
+
+  return {
+    ...module,
+    featuredBooks: books,
+    highlightedQuote: books.find((book) => !!book.quote)?.quote ?? null,
+  };
 }
 
 export function getLocaleSwitch(locale: Locale, currentPath: string) {

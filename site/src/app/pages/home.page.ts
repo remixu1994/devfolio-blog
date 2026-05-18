@@ -167,6 +167,55 @@ import { getHomeViewModel, getLocale } from '../site-content';
     </section>
 
     <section class="mt-8 border border-[color:var(--border-color)] bg-white lg:mt-10">
+      <div class="grid gap-6 border-b border-[color:var(--border-color)] bg-[rgba(255,249,240,0.7)] px-5 py-5 md:px-8 md:py-8 lg:grid-cols-[0.95fr_1.05fr]">
+        <div>
+          <p class="font-[var(--font-mono)] text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)] md:text-xs md:tracking-[0.32em]">
+            {{ viewModel().dictionary.home.booksLabel }}
+          </p>
+          <h2 class="mt-2 font-[var(--font-display)] text-2xl font-semibold text-[color:var(--ink)] md:mt-3 md:text-4xl">
+            {{ viewModel().books.title }}
+          </h2>
+          <p class="mt-4 max-w-2xl text-sm leading-7 text-[color:var(--muted)]">{{ viewModel().books.summary }}</p>
+          <div class="mt-5 flex flex-wrap gap-3">
+            <a
+              [routerLink]="['/', locale(), 'books']"
+              class="rounded-full bg-[color:var(--ink)] px-5 py-3 text-sm font-medium text-white transition hover:bg-[color:var(--accent)]"
+            >
+              {{ viewModel().books.cta }}
+            </a>
+            @if (viewModel().books.highlightedQuote; as quote) {
+              <span class="inline-flex max-w-full items-center rounded-full border border-[color:var(--border-color)] bg-white px-4 py-3 text-sm text-[color:var(--muted)] md:max-w-[32rem]">
+                “{{ quote }}”
+              </span>
+            }
+          </div>
+
+          <div class="mt-6 grid gap-4 sm:grid-cols-2">
+            @for (book of viewModel().books.featuredBooks; track book.slug) {
+              <article class="overflow-hidden rounded-[22px] border border-[color:var(--border-color)] bg-white/80">
+                @if (book.quote) {
+                  <div class="bg-[linear-gradient(135deg,rgba(255,246,232,0.96),rgba(234,239,247,0.92))] px-4 py-4">
+                    <p class="font-[var(--font-mono)] text-[10px] uppercase tracking-[0.28em] text-[color:var(--muted)]">
+                      {{ viewModel().dictionary.books.quoteLabel }}
+                    </p>
+                    <p class="mt-3 text-sm font-semibold leading-7 text-[color:var(--ink)]">
+                      “{{ book.quote }}”
+                    </p>
+                  </div>
+                }
+                <div class="p-4">
+                  <p class="font-[var(--font-mono)] text-[10px] uppercase tracking-[0.28em] text-[color:var(--accent)]">
+                    {{ book.category }}
+                  </p>
+                  <h3 class="mt-2 text-lg font-semibold text-[color:var(--ink)]">{{ book.title }}</h3>
+                  <p class="mt-2 text-sm leading-7 text-[color:var(--muted)]">{{ book.takeaway }}</p>
+                </div>
+              </article>
+            }
+          </div>
+        </div>
+      </div>
+
       <div class="flex flex-wrap items-end justify-between gap-4 border-b border-[color:var(--border-color)] px-5 py-5 md:px-8 md:py-6">
         <div>
           <p class="font-[var(--font-mono)] text-[11px] uppercase tracking-[0.28em] text-[color:var(--muted)] md:text-xs md:tracking-[0.32em]">Recent Writing</p>

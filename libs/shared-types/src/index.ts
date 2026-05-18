@@ -49,6 +49,7 @@ export interface ResumeProjectShowcaseBlock {
   imageSrc?: string;
   imageAlt?: string;
   caption?: string;
+  groupKey?: string;
 }
 
 export interface ResumeProjectShowcaseSection {
@@ -134,6 +135,21 @@ export interface TopicShowcase extends StaticContentFrontmatter {
     description: string;
   }[];
   body: string;
+}
+
+export interface BookRecommendation {
+  slug: string;
+  locale: Locale;
+  title: string;
+  originalTitle?: string;
+  author?: string;
+  category: string;
+  summary: string;
+  takeaway: string;
+  recommendation: string;
+  quote?: string;
+  coverImage?: string;
+  featured: boolean;
 }
 
 export type PostStatus = 'draft' | 'published';

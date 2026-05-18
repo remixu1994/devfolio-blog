@@ -7,6 +7,7 @@ export interface SiteDictionary {
     home: string;
     resume: string;
     architecture: string;
+    books: string;
     unraid: string;
     fitness: string;
     blog: string;
@@ -16,6 +17,7 @@ export interface SiteDictionary {
     heroTitle: string;
     heroBody: string;
     featuredLabel: string;
+    booksLabel: string;
     recentLabel: string;
     contactLabel: string;
   };
@@ -36,6 +38,18 @@ export interface SiteDictionary {
     sections: string;
     stack: string;
   };
+  books: {
+    title: string;
+    intro: string;
+    featured: string;
+    featuredTitle: string;
+    groups: string;
+    groupsTitle: string;
+    notes: string;
+    quoteLabel: string;
+    takeawayLabel: string;
+    recommendationLabel: string;
+  };
   footer: string;
 }
 
@@ -47,6 +61,7 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
       home: '首页',
       resume: '简历',
       architecture: '架构设计',
+      books: '书籍推荐',
       unraid: 'Unraid NAS',
       fitness: '健身 AI Agent',
       blog: '技术博客',
@@ -57,6 +72,7 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
       heroBody:
         '关注复杂业务拆解、服务边界设计、稳定性交付与产品化落地，把长期工程经验沉淀为可复用的方法和案例。',
       featuredLabel: '代表架构',
+      booksLabel: '书籍推荐',
       recentLabel: '最新写作',
       contactLabel: '联系与协作',
     },
@@ -77,6 +93,18 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
       sections: '专题章节',
       stack: '技术栈',
     },
+    books: {
+      title: '书籍推荐',
+      intro: '这些书构成了我的长期技术阅读主线：重构、架构、代码质量、设计模式、系统工程与工程方法。',
+      featured: '主推书单',
+      featuredTitle: '精选书单',
+      groups: '书架分组',
+      groupsTitle: '按标准类别整理的技术书单',
+      notes: '阅读观点',
+      quoteLabel: '经典语录',
+      takeawayLabel: '我读到的重点',
+      recommendationLabel: '为什么推荐',
+    },
     footer: 'Moon Devfolio 记录工程实践、架构思考与产品化探索。',
   },
   en: {
@@ -86,6 +114,7 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
       home: 'Home',
       resume: 'Resume',
       architecture: 'Architecture',
+      books: 'Books',
       unraid: 'Unraid NAS',
       fitness: 'Fitness AI Agent',
       blog: 'Blog',
@@ -96,6 +125,7 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
       heroBody:
         'Focused on business decomposition, service boundaries, reliable delivery, and product-minded engineering practice.',
       featuredLabel: 'Featured architecture',
+      booksLabel: 'Bookshelf',
       recentLabel: 'Recent writing',
       contactLabel: 'Contact',
     },
@@ -115,6 +145,18 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     topic: {
       sections: 'Topic sections',
       stack: 'Tech stack',
+    },
+    books: {
+      title: 'Book Recommendations',
+      intro: 'These books form my long-running technical reading spine across refactoring, architecture, code quality, design patterns, systems engineering, and delivery practice.',
+      featured: 'Featured shelf',
+      featuredTitle: 'Featured Books',
+      groups: 'Bookshelf groups',
+      groupsTitle: 'Books organized by standard categories',
+      notes: 'Reading notes',
+      quoteLabel: 'Quote',
+      takeawayLabel: 'What I took away',
+      recommendationLabel: 'Why I recommend it',
     },
     footer: 'Moon Devfolio documents engineering practice, architecture thinking, and product exploration.',
   },
