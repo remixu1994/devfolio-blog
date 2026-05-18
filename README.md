@@ -166,3 +166,6 @@ npm run build
 - 当前博客静态专题内容由仓库内共享内容数据提供。
 - 动态文章通过 API 内存存储演示管理链路，后续可继续接入 PostgreSQL 持久化仓储。
 - GitHub OAuth 已预留接口与环境变量，当前为可配置占位流程。
+## Review
+
+- Review rules: [docs/review-rules.md](docs/review-rules.md)
