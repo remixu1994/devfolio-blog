@@ -128,7 +128,7 @@ async function waitForHealthOrExit(service, exitPromise) {
     try {
       for (const url of service.healthUrls) {
         const response = await fetch(url, { redirect: 'manual' });
-        if (response.status >= 200 && response.status < 300) {
+        if (response.status < 500) {
           return;
         }
       }
