@@ -125,15 +125,15 @@ async function waitForHealthOrExit(service, exitPromise) {
       throw new Error(`[${service.name}] exited before becoming healthy`);
     }
 
-    try {
-      for (const url of service.healthUrls) {
+    for (const url of service.healthUrls) {
+      try {
         const response = await fetch(url, { redirect: 'manual' });
         if (response.status < 500) {
           return;
         }
+      } catch {
+        // Service may still be booting; try next fallback URL.
       }
-    } catch {
-      // Service may still be booting.
     }
 
     await sleep(POLL_MS);
