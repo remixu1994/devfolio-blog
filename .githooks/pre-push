@@ -9,4 +9,7 @@ echo "[pre-push] Running local npm ci check before push..."
 cd "$repo_root"
 npm ci
 
-echo "[pre-push] npm ci passed. Continuing push."
+echo "[pre-push] Running local lint check before push..."
+npm run lint
+
+echo "[pre-push] npm ci and lint passed. Continuing push."

@@ -47,8 +47,11 @@ describe('ResumePageComponent', () => {
     );
 
     expect(targetCard).toBeDefined();
+    if (!targetCard) {
+      throw new Error('Expected target project card to exist');
+    }
 
-    targetCard!.componentInstance.openShowcase.emit();
+    targetCard.componentInstance.openShowcase.emit();
 
     expect(dialog.open).toHaveBeenCalledWith(
       ResumeShowcaseDialogComponent,

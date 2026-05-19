@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import type { BookRecommendation } from '@devfolio-blog/shared-types';
 
 @Component({
   standalone: true,
@@ -102,7 +103,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BookCardComponent {
-  @Input({ required: true }) book!: any;
+  @Input({ required: true }) book!: BookRecommendation;
   @Input({ required: true }) quoteLabel!: string;
   @Input({ required: true }) takeawayLabel!: string;
   @Input({ required: true }) recommendationLabel!: string;

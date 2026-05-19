@@ -21,7 +21,15 @@ import {
   },
   template: `
     @if (showcase(); as showcase) {
-      <div class="flex h-full w-full justify-end" (click)="onOverlayClick($event)">
+      <div
+        class="flex h-full w-full justify-end"
+        tabindex="0"
+        role="button"
+        aria-label="Close showcase"
+        (click)="onOverlayClick($event)"
+        (keydown.enter)="closeDialog()"
+        (keydown.space)="onOverlaySpace($event)"
+      >
         <aside
           class="flex h-full w-full max-w-[56rem] flex-col border-l border-[color:var(--border-color)] bg-[color:var(--surface)] shadow-[-24px_0_60px_rgba(23,32,51,0.16)]"
         >
@@ -171,6 +179,11 @@ export class ResumeShowcaseDialogComponent {
     if (event.target === event.currentTarget) {
       this.closeDialog();
     }
+  }
+
+  onOverlaySpace(event: KeyboardEvent) {
+    event.preventDefault();
+    this.closeDialog();
   }
 
   private groupBlocks(blocks: ResumeProjectShowcaseBlock[]): ShowcaseBlockGroup[] {

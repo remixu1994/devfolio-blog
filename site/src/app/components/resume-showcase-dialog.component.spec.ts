@@ -105,8 +105,11 @@ describe('ResumeShowcaseDialogComponent', () => {
       button.textContent?.includes(labels.openImage),
     );
     expect(openImageButton).toBeDefined();
+    if (!openImageButton) {
+      throw new Error('Expected image preview button to exist');
+    }
 
-    openImageButton!.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    openImageButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     fixture.detectChanges();
 
     expect(dialog.open).toHaveBeenCalledWith(
@@ -125,8 +128,11 @@ describe('ResumeShowcaseDialogComponent', () => {
       button.textContent?.includes('Backlog'),
     );
     expect(backlogButton).toBeDefined();
+    if (!backlogButton) {
+      throw new Error('Expected backlog button to exist');
+    }
 
-    backlogButton!.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    backlogButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     fixture.detectChanges();
 
     expect(host.querySelector('h2')?.textContent).toContain('Backlog');
