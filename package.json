@@ -4,7 +4,9 @@
   "private": true,
   "packageManager": "npm@10.9.2",
   "scripts": {
+    "prepare": "npm run setup:hooks",
     "nx": "node .nx/nxw.js",
+    "setup:hooks": "node tools/git-hooks/setup-hooks.mjs",
     "start:site": "node .nx/nxw.js serve site",
     "start:site:hmr": "node .nx/nxw.js serve site --configuration=development",
     "start:admin": "node .nx/nxw.js serve admin",
