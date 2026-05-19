@@ -39,7 +39,7 @@ describe('PublicContentService', () => {
   });
 
   it('returns a published post by slug', async () => {
-    const post = await service.getPost('nx-monorepo-for-content-platforms', 'zh');
-    expect(post.slug).toBe('nx-monorepo-for-content-platforms');
+    const post = await service.getPost('modular-boundaries-for-content-platforms', 'zh');
+    expect(post.slug).toBe('modular-boundaries-for-content-platforms');
   });
 });

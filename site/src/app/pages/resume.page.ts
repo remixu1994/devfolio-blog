@@ -242,7 +242,12 @@ interface ShowcaseBlockGroup {
         <!-- Backdrop overlay — click to close the showcase panel -->
         <div
           class="fixed inset-0 z-30 bg-[rgba(23,32,51,0.28)] backdrop-blur-[1px]"
+          tabindex="0"
+          role="button"
+          aria-label="Close showcase"
           (click)="closeShowcase()"
+          (keydown.enter)="closeShowcase()"
+          (keydown.space)="closeShowcase()"
         ></div>
 
         <!-- Showcase slide-in panel — project title, section title, summary, and close button -->
@@ -383,7 +388,12 @@ interface ShowcaseBlockGroup {
       @if (previewImageSrc(); as previewSrc) {
         <div
           class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
-          (click)="closeImagePreview()"
+          tabindex="0"
+          role="button"
+          aria-label="Close image preview"
+          (click)="onImagePreviewOverlayClick($event)"
+          (keydown.enter)="closeImagePreview()"
+          (keydown.space)="closeImagePreview()"
         >
           <button
             type="button"
@@ -398,7 +408,6 @@ interface ShowcaseBlockGroup {
             [src]="previewSrc"
             alt="Preview"
             class="max-h-[90vh] max-w-[90vw] object-contain"
-            (click)="$event.stopPropagation()"
           />
         </div>
       }
@@ -459,6 +468,12 @@ export class ResumePageComponent {
 
   closeImagePreview() {
     this.previewImageSrc.set(null);
+  }
+
+  onImagePreviewOverlayClick(event: MouseEvent) {
+    if (event.target === event.currentTarget) {
+      this.closeImagePreview();
+    }
   }
 
   // --- Active showcase data accessors ---

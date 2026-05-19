@@ -12,6 +12,8 @@
     "preview:site": "node tools/static-preview-server.mjs dist/site/browser 4210",
     "preview:admin": "node tools/static-preview-server.mjs dist/admin/browser 4300",
     "build": "node .nx/nxw.js run-many -t build",
+    "ci:build:apps": "node .nx/nxw.js run-many -t build -p api site admin --parallel=3",
+    "ci:health": "node tools/ci/health-check.mjs",
     "test": "node .nx/nxw.js run-many -t test",
     "lint": "node .nx/nxw.js run-many -t lint",
     "e2e": "node .nx/nxw.js run-many -t e2e"
