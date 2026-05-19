@@ -54,6 +54,9 @@
     "serve": {
       "continuous": true,
       "executor": "@angular/build:dev-server",
+      "options": {
+        "port": 4300
+      },
       "configurations": {
         "production": {
           "buildTarget": "admin:build:production"
@@ -76,6 +79,7 @@
       "executor": "@nx/web:file-server",
       "options": {
         "buildTarget": "admin:build",
+        "port": 4300,
         "staticFilePath": "dist/admin/browser",
         "spa": true
       }
