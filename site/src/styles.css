@@ -53,3 +53,32 @@ a {
 ::selection {
   background: rgba(15, 91, 216, 0.16);
 }
+
+.resume-showcase-dialog-panel,
+.resume-image-preview-dialog-panel {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+}
+
+.resume-showcase-dialog-panel .cdk-dialog-container,
+.resume-image-preview-dialog-panel .cdk-dialog-container {
+  width: 100%;
+  height: 100%;
+  outline: none;
+}
+
+.resume-showcase-dialog-panel .cdk-dialog-container {
+  background: transparent;
+}
+
+.resume-showcase-dialog-backdrop {
+  background: rgba(23, 32, 51, 0.28);
+  backdrop-filter: blur(1px);
+}
+
+.resume-image-preview-dialog-backdrop {
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(4px);
+}
