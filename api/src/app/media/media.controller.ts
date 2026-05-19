@@ -25,7 +25,7 @@ export class MediaController {
     FileInterceptor('file', {
       fileFilter: (_request, file, callback) => {
         if (!ALLOWED_MIME_TYPES.has(file.mimetype)) {
-          callback(new Error(`Unsupported file type: ${file.mimetype}`));
+          callback(new Error(`Unsupported file type: ${file.mimetype}`), false);
           return;
         }
         callback(null, true);
