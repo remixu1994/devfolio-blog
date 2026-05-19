@@ -9,9 +9,24 @@ const POLL_MS = 1_000;
 const LOG_TAIL_LINES = 120;
 
 const services = [
-  { name: 'api', port: 3000, url: 'http://127.0.0.1:3000/api', commandArgs: ['.nx/nxw.js', 'serve', 'api'] },
-  { name: 'site', port: 4200, url: 'http://127.0.0.1:4200/zh', commandArgs: ['.nx/nxw.js', 'serve', 'site'] },
-  { name: 'admin', port: 4300, url: 'http://127.0.0.1:4300/', commandArgs: ['.nx/nxw.js', 'serve', 'admin'] },
+  {
+    name: 'api',
+    port: 3000,
+    healthUrls: ['http://127.0.0.1:3000/api', 'http://localhost:3000/api'],
+    commandArgs: ['.nx/nxw.js', 'serve', 'api'],
+  },
+  {
+    name: 'site',
+    port: 4200,
+    healthUrls: ['http://127.0.0.1:4200/zh', 'http://localhost:4200/zh'],
+    commandArgs: ['.nx/nxw.js', 'serve', 'site'],
+  },
+  {
+    name: 'admin',
+    port: 4300,
+    healthUrls: ['http://127.0.0.1:4300/', 'http://localhost:4300/'],
+    commandArgs: ['.nx/nxw.js', 'serve', 'admin'],
+  },
 ];
 
 const runningChildren = new Set();
@@ -79,7 +94,7 @@ async function verifyServiceStartup(service) {
 
   try {
     await waitForHealthOrExit(service, exitPromise);
-    console.log(`[${service.name}] Healthy at ${service.url}`);
+    console.log(`[${service.name}] Healthy`);
   } catch (error) {
     const exited = await Promise.race([
       exitPromise,
@@ -111,9 +126,11 @@ async function waitForHealthOrExit(service, exitPromise) {
     }
 
     try {
-      const response = await fetch(service.url, { redirect: 'manual' });
-      if (response.status >= 200 && response.status < 300) {
-        return;
+      for (const url of service.healthUrls) {
+        const response = await fetch(url, { redirect: 'manual' });
+        if (response.status >= 200 && response.status < 300) {
+          return;
+        }
       }
     } catch {
       // Service may still be booting.
@@ -122,7 +139,9 @@ async function waitForHealthOrExit(service, exitPromise) {
     await sleep(POLL_MS);
   }
 
-  throw new Error(`[${service.name}] health check timeout after ${TIMEOUT_MS / 1000}s: ${service.url}`);
+  throw new Error(
+    `[${service.name}] health check timeout after ${TIMEOUT_MS / 1000}s: ${service.healthUrls.join(', ')}`,
+  );
 }
 
 async function assertPortIsFree(port, serviceName) {
