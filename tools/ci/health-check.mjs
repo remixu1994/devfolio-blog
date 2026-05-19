@@ -172,7 +172,7 @@ async function assertPortIsFree(port, serviceName) {
 }
 
 async function stopChild(child) {
-  if (!child || child.killed) {
+  if (!child || child.exitCode !== null || child.signalCode != null) {
     return;
   }
 
@@ -180,11 +180,11 @@ async function stopChild(child) {
     spawnSync('taskkill', ['/pid', String(child.pid), '/t', '/f'], { stdio: 'ignore' });
   } else {
     child.kill('SIGTERM');
-    await Promise.race([
-      new Promise((resolve) => child.once('exit', resolve)),
-      sleep(8_000),
+    const exited = await Promise.race([
+      new Promise((resolve) => child.once('exit', () => resolve(true))),
+      sleep(8_000).then(() => false),
     ]);
-    if (!child.killed) {
+    if (!exited) {
       child.kill('SIGKILL');
     }
   }
