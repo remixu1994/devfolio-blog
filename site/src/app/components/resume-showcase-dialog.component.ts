@@ -181,7 +181,7 @@ export class ResumeShowcaseDialogComponent {
     }
   }
 
-  onOverlaySpace(event: KeyboardEvent) {
+  onOverlaySpace(event: Event) {
     event.preventDefault();
     this.closeDialog();
   }
