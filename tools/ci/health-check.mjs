@@ -4,8 +4,9 @@ import { spawn, spawnSync } from 'node:child_process';
 import path from 'node:path';
 
 const ROOT = process.cwd();
-const TIMEOUT_MS = 90_000;
+const TIMEOUT_MS = 60_000;
 const POLL_MS = 1_000;
+const PROGRESS_LOG_INTERVAL_MS = 5_000;
 const LOG_TAIL_LINES = 120;
 
 const services = [
@@ -45,7 +46,17 @@ async function main() {
   await assertProjectConfig();
 
   for (const service of services) {
-    await assertPortIsFree(service.port, service.name);
+    const portFree = await isPortFree(service.port);
+    if (!portFree) {
+      const healthy = await isAnyHealthUrlReachable(service.healthUrls);
+      if (healthy) {
+        console.log(`[${service.name}] port ${service.port} already in use and healthy, reusing existing service`);
+        continue;
+      }
+
+      await ensurePortIsFree(service.port, service.name);
+    }
+
     await verifyServiceStartup(service);
   }
 
@@ -114,6 +125,7 @@ async function verifyServiceStartup(service) {
 
 async function waitForHealthOrExit(service, exitPromise) {
   const start = Date.now();
+  let lastProgressAt = 0;
 
   while (Date.now() - start <= TIMEOUT_MS) {
     const exited = await Promise.race([
@@ -134,6 +146,14 @@ async function waitForHealthOrExit(service, exitPromise) {
       } catch {
         // Service may still be booting; try next fallback URL.
       }
+    }
+
+    const elapsedMs = Date.now() - start;
+    if (elapsedMs - lastProgressAt >= PROGRESS_LOG_INTERVAL_MS) {
+      lastProgressAt = elapsedMs;
+      console.log(
+        `[${service.name}] waiting... ${Math.floor(elapsedMs / 1000)}s elapsed (timeout ${TIMEOUT_MS / 1000}s)`,
+      );
     }
 
     await sleep(POLL_MS);
@@ -169,6 +189,117 @@ async function assertPortIsFree(port, serviceName) {
 
     socket.connect(port, '127.0.0.1');
   });
+}
+
+async function ensurePortIsFree(port, serviceName) {
+  try {
+    await assertPortIsFree(port, serviceName);
+    return;
+  } catch {
+    const released = tryReleasePort(port);
+    if (released) {
+      await sleep(500);
+      await assertPortIsFree(port, serviceName);
+      console.log(`[${serviceName}] released stale process on port ${port}`);
+      return;
+    }
+    throw new Error(`[${serviceName}] required port ${port} is already in use`);
+  }
+}
+
+async function isPortFree(port) {
+  try {
+    await new Promise((resolve, reject) => {
+      const socket = new Socket();
+      socket.setTimeout(1_500);
+
+      socket.once('connect', () => {
+        socket.destroy();
+        reject(new Error('in use'));
+      });
+
+      socket.once('timeout', () => {
+        socket.destroy();
+        resolve();
+      });
+
+      socket.once('error', (error) => {
+        if (error && (error.code === 'ECONNREFUSED' || error.code === 'EHOSTUNREACH')) {
+          resolve();
+          return;
+        }
+        reject(error);
+      });
+
+      socket.connect(port, '127.0.0.1');
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function isAnyHealthUrlReachable(healthUrls) {
+  for (const url of healthUrls) {
+    try {
+      const response = await fetch(url, { redirect: 'manual' });
+      if (response.status < 500) {
+        return true;
+      }
+    } catch {
+      // try next fallback URL
+    }
+  }
+  return false;
+}
+
+function tryReleasePort(port) {
+  if (process.platform === 'win32') {
+    const netstat = spawnSync('netstat', ['-ano'], { encoding: 'utf8' });
+    if (netstat.status !== 0 || !netstat.stdout) {
+      return false;
+    }
+
+    const pids = new Set();
+    for (const line of netstat.stdout.split(/\r?\n/)) {
+      if (!line.includes(`:${port}`)) {
+        continue;
+      }
+      const parts = line.trim().split(/\s+/);
+      const pid = parts[parts.length - 1];
+      if (pid && /^\d+$/.test(pid)) {
+        pids.add(pid);
+      }
+    }
+
+    let killedAny = false;
+    for (const pid of pids) {
+      const result = spawnSync('taskkill', ['/pid', String(pid), '/t', '/f'], { stdio: 'ignore' });
+      if (result.status === 0) {
+        killedAny = true;
+      }
+    }
+    return killedAny;
+  }
+
+  const lsof = spawnSync('lsof', ['-ti', `tcp:${port}`], { encoding: 'utf8' });
+  if (lsof.status !== 0 || !lsof.stdout) {
+    return false;
+  }
+
+  const pids = lsof.stdout
+    .split(/\r?\n/)
+    .map((value) => value.trim())
+    .filter(Boolean);
+
+  let killedAny = false;
+  for (const pid of pids) {
+    const killResult = spawnSync('kill', ['-9', pid], { stdio: 'ignore' });
+    if (killResult.status === 0) {
+      killedAny = true;
+    }
+  }
+  return killedAny;
 }
 
 async function stopChild(child) {

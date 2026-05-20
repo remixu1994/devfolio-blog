@@ -79,6 +79,7 @@ describe('ResumeShowcaseDialogComponent', () => {
   it('uses the default section, opens image preview, and switches sections', () => {
     const dialog = {
       open: vi.fn(),
+      getDialogById: vi.fn().mockReturnValue(null),
     };
     const dialogRef = {
       close: vi.fn(),
@@ -115,6 +116,7 @@ describe('ResumeShowcaseDialogComponent', () => {
     expect(dialog.open).toHaveBeenCalledWith(
       ResumeImagePreviewDialogComponent,
       expect.objectContaining({
+        id: 'resume-showcase-image-preview',
         data: expect.objectContaining({
           src: '/assets/architecture.png',
           alt: 'Architecture diagram',
@@ -137,5 +139,34 @@ describe('ResumeShowcaseDialogComponent', () => {
 
     expect(host.querySelector('h2')?.textContent).toContain('Backlog');
     expect(host.textContent).toContain('Coming soon');
+  });
+
+  it('does not open a duplicate image preview dialog', () => {
+    const dialog = {
+      open: vi.fn(),
+      getDialogById: vi.fn().mockReturnValue({}),
+    };
+    const dialogRef = {
+      close: vi.fn(),
+    };
+    const data: ResumeShowcaseDialogData = { project, labels };
+
+    TestBed.configureTestingModule({
+      imports: [ResumeShowcaseDialogComponent],
+      providers: [
+        { provide: Dialog, useValue: dialog },
+        { provide: DialogRef, useValue: dialogRef },
+        { provide: DIALOG_DATA, useValue: data },
+      ],
+    });
+
+    const fixture = TestBed.createComponent(ResumeShowcaseDialogComponent);
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+    component.openImagePreview({ src: '/assets/architecture.png', alt: 'Architecture diagram' });
+
+    expect(dialog.getDialogById).toHaveBeenCalledWith('resume-showcase-image-preview');
+    expect(dialog.open).not.toHaveBeenCalled();
   });
 });

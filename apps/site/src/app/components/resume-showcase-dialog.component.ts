@@ -115,6 +115,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResumeShowcaseDialogComponent {
+  private static readonly IMAGE_PREVIEW_DIALOG_ID = 'resume-showcase-image-preview';
+
   readonly data = inject<ResumeShowcaseDialogData>(DIALOG_DATA);
   private readonly dialog = inject(Dialog);
   private readonly dialogRef = inject(DialogRef<ResumeShowcaseDialogComponent>);
@@ -153,12 +155,17 @@ export class ResumeShowcaseDialogComponent {
   }
 
   openImagePreview(request: ResumeShowcaseImagePreviewRequest) {
+    if (this.dialog.getDialogById(ResumeShowcaseDialogComponent.IMAGE_PREVIEW_DIALOG_ID)) {
+      return;
+    }
+
     const data: ResumeImagePreviewDialogData = {
       src: request.src,
       alt: request.alt,
     };
 
     this.dialog.open(ResumeImagePreviewDialogComponent, {
+      id: ResumeShowcaseDialogComponent.IMAGE_PREVIEW_DIALOG_ID,
       data,
       autoFocus: false,
       restoreFocus: true,

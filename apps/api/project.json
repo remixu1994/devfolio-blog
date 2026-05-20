@@ -7,14 +7,27 @@
   "targets": {
     "build": {
       "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/api"],
       "options": {
-        "command": "node ../../node_modules/webpack-cli/bin/cli.js build",
-        "args": ["--node-env=production"],
+        "outputPath": "dist/api",
+        "outputFileName": "main.js",
         "cwd": "apps/api"
+      ,
+        "commands": [
+          {
+            "command": "node ../../node_modules/webpack-cli/bin/cli.js build --node-env=production",
+            "forwardAllArgs": false
+          }
+        ]
       },
       "configurations": {
         "development": {
-          "args": ["--node-env=development"]
+          "commands": [
+            {
+              "command": "node ../../node_modules/webpack-cli/bin/cli.js build --node-env=development",
+              "forwardAllArgs": false
+            }
+          ]
         }
       }
     },
@@ -45,14 +58,21 @@
     },
     "serve": {
       "continuous": true,
-      "executor": "nx:run-commands",
+      "executor": "@nx/js:node",
       "defaultConfiguration": "development",
       "dependsOn": ["build"],
       "options": {
-        "command": "node ../../dist/api/main.js",
-        "cwd": "apps/api"
+        "buildTarget": "api:build",
+        "runBuildTargetDependencies": false
       },
-      "configurations": {}
+      "configurations": {
+        "development": {
+          "buildTarget": "api:build:development"
+        },
+        "production": {
+          "buildTarget": "api:build:production"
+        }
+      }
     },
     "lint": {
       "executor": "nx:run-commands",
