@@ -13,6 +13,7 @@ describe('ResumePageComponent', () => {
     const paramMap = convertToParamMap({ locale: 'zh' });
     const dialog = {
       open: vi.fn(),
+      getDialogById: vi.fn().mockReturnValue(null),
     };
 
     TestBed.configureTestingModule({
@@ -56,6 +57,7 @@ describe('ResumePageComponent', () => {
     expect(dialog.open).toHaveBeenCalledWith(
       ResumeShowcaseDialogComponent,
       expect.objectContaining({
+        id: expect.stringContaining('resume-showcase-'),
         data: expect.objectContaining({
           project: showcaseProject,
           labels: component.viewModel().resume.labels,
@@ -64,5 +66,46 @@ describe('ResumePageComponent', () => {
         backdropClass: 'resume-showcase-dialog-backdrop',
       }),
     );
+  });
+
+  it('does not open duplicate showcase dialog when the same project dialog is already open', () => {
+    const paramMap = convertToParamMap({ locale: 'zh' });
+    const dialog = {
+      open: vi.fn(),
+      getDialogById: vi.fn().mockReturnValue({}),
+    };
+
+    TestBed.configureTestingModule({
+      imports: [ResumePageComponent],
+      providers: [
+        { provide: Dialog, useValue: dialog },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            parent: {
+              paramMap: of(paramMap),
+              snapshot: { paramMap },
+            },
+            paramMap: of(paramMap),
+            snapshot: { paramMap },
+          },
+        },
+      ],
+    });
+
+    const fixture = TestBed.createComponent(ResumePageComponent);
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+    const showcaseProject = component.viewModel().resume.projects.find((project) => project.showcase);
+    expect(showcaseProject).toBeDefined();
+    if (!showcaseProject) {
+      throw new Error('Expected a showcase project');
+    }
+
+    component.openProjectShowcase(showcaseProject);
+
+    expect(dialog.getDialogById).toHaveBeenCalledTimes(1);
+    expect(dialog.open).not.toHaveBeenCalled();
   });
 });
