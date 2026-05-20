@@ -3,25 +3,26 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "prefix": "app",
-  "sourceRoot": "apps/admin/src",
+  "sourceRoot": "apps/admin/ui/src",
   "tags": [],
   "targets": {
-    "build": {
+    "ui-build": {
       "executor": "@angular/build:application",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/admin",
-        "browser": "apps/admin/src/main.ts",
-        "tsConfig": "apps/admin/tsconfig.app.json",
+        "outputPath": "dist/admin-ui",
+        "browser": "apps/admin/ui/src/main.ts",
+        "index": "apps/admin/ui/src/index.html",
+        "tsConfig": "apps/admin/ui/tsconfig.app.json",
         "baseHref": "/admin/",
         "inlineStyleLanguage": "scss",
         "assets": [
           {
             "glob": "**/*",
-            "input": "apps/admin/public"
+            "input": "apps/admin/ui/public"
           }
         ],
-        "styles": ["apps/admin/src/styles.css"]
+        "styles": ["apps/admin/ui/src/styles.css"]
       },
       "configurations": {
         "production": {
@@ -52,30 +53,93 @@
       },
       "defaultConfiguration": "production"
     },
-    "serve": {
-      "continuous": true,
-      "executor": "@angular/build:dev-server",
+    "api-build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/admin"],
       "options": {
-        "host": "0.0.0.0",
-        "allowedHosts": ["localhost", "127.0.0.1"],
-        "port": 4300
+        "cwd": "apps/admin/api",
+        "command": "node ../../../node_modules/webpack-cli/bin/cli.js build --node-env=production"
       },
       "configurations": {
-        "production": {
-          "buildTarget": "admin:build:production"
-        },
         "development": {
-          "buildTarget": "admin:build:development"
+          "command": "node ../../../node_modules/webpack-cli/bin/cli.js build --node-env=development"
+        },
+        "production": {
+          "command": "node ../../../node_modules/webpack-cli/bin/cli.js build --node-env=production"
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "production"
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "target": "ui-build",
+          "projects": "self",
+          "params": "forward"
+        },
+        {
+          "target": "api-build",
+          "projects": "self",
+          "params": "forward"
+        }
+      ],
+      "outputs": ["{workspaceRoot}/dist/admin"],
+      "options": {
+        "command": "node tools/scripts/copy-admin-ui-to-admin.mjs"
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "admin:build",
+        "runBuildTargetDependencies": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "admin:build:development"
+        },
+        "production": {
+          "buildTarget": "admin:build:production"
+        }
+      }
     },
     "lint": {
       "executor": "@nx/eslint:lint"
     },
-    "test": {
+    "api-test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node ../../../node_modules/jest/bin/jest.js --config jest.config.cts --passWithNoTests",
+        "cwd": "apps/admin/api"
+      }
+    },
+    "ui-test": {
       "executor": "@angular/build:unit-test",
-      "options": {}
+      "options": {
+        "buildTarget": "admin:ui-build",
+        "tsConfig": "apps/admin/ui/tsconfig.spec.json"
+      }
+    },
+    "test": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        {
+          "target": "api-test",
+          "projects": "self"
+        },
+        {
+          "target": "ui-test",
+          "projects": "self"
+        }
+      ]
     },
     "serve-static": {
       "continuous": true,
@@ -83,9 +147,34 @@
       "options": {
         "buildTarget": "admin:build",
         "port": 4300,
-        "staticFilePath": "dist/admin/browser",
+        "staticFilePath": "dist/admin/admin",
         "spa": true
       }
+    },
+    "prune-lockfile": {
+      "dependsOn": ["build"],
+      "cache": true,
+      "executor": "@nx/js:prune-lockfile",
+      "outputs": [
+        "{workspaceRoot}/dist/admin/package.json",
+        "{workspaceRoot}/dist/admin/package-lock.json"
+      ],
+      "options": {
+        "buildTarget": "build"
+      }
+    },
+    "copy-workspace-modules": {
+      "dependsOn": ["build"],
+      "cache": true,
+      "outputs": ["{workspaceRoot}/dist/admin/workspace_modules"],
+      "executor": "@nx/js:copy-workspace-modules",
+      "options": {
+        "buildTarget": "build"
+      }
+    },
+    "prune": {
+      "dependsOn": ["prune-lockfile", "copy-workspace-modules"],
+      "executor": "nx:noop"
     }
   }
 }

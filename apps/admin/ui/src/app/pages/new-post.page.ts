@@ -139,7 +139,7 @@ export class NewPostPageComponent {
           void this.router.navigateByUrl('/');
         },
         error: () => {
-          this.message.set('API is not reachable yet. Start the Nest API at http://localhost:3000 and try again.');
+          this.message.set('Admin service is not reachable yet. Start it at http://localhost:3000 and try again.');
         },
       });
   }

@@ -26,7 +26,7 @@ import { AdminApiService } from '../services/admin-api.service';
         <article class="rounded-[24px] border border-[color:var(--border-color)] bg-white/5 p-5">
           <p class="text-xs uppercase tracking-[0.28em] text-[color:var(--muted)]">Apps</p>
           <p class="mt-3 text-3xl font-semibold">3</p>
-          <p class="mt-2 text-sm text-[color:var(--muted)]">site / admin / api</p>
+          <p class="mt-2 text-sm text-[color:var(--muted)]">site / admin+api</p>
         </article>
         <article class="rounded-[24px] border border-[color:var(--border-color)] bg-white/5 p-5">
           <p class="text-xs uppercase tracking-[0.28em] text-[color:var(--muted)]">Content Mode</p>

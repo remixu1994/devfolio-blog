@@ -5,8 +5,8 @@ import { fileURLToPath } from 'node:url';
 const currentFile = fileURLToPath(import.meta.url);
 const currentDir = path.dirname(currentFile);
 const root = path.resolve(currentDir, '..', '..');
-const sourceDir = path.join(root, 'dist', 'admin', 'browser');
-const targetDir = path.join(root, 'dist', 'api', 'admin');
+const sourceDir = path.join(root, 'dist', 'admin-ui', 'browser');
+const targetDir = path.join(root, 'dist', 'admin', 'admin');
 
 async function copyAdminAssets() {
   try {
@@ -15,7 +15,7 @@ async function copyAdminAssets() {
       throw new Error(`Admin build output is not a directory: ${sourceDir}`);
     }
   } catch (error) {
-    throw new Error(`Admin build output missing at ${sourceDir}. Run admin:build before api:build.`);
+    throw new Error(`Admin UI build output missing at ${sourceDir}. Run admin:ui-build before admin:build.`);
   }
 
   await mkdir(path.dirname(targetDir), { recursive: true });

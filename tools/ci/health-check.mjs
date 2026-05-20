@@ -12,23 +12,20 @@ const FORCE_FRESH = process.argv.includes('--fresh');
 
 const services = [
   {
-    name: 'api',
+    name: 'admin',
     port: 3000,
-    healthUrls: [
-      'http://127.0.0.1:3000/api',
-      'http://localhost:3000/api',
-      'http://127.0.0.1:3000/admin',
-      'http://localhost:3000/admin',
+    healthChecks: [
+      ['http://127.0.0.1:3000/api', 'http://localhost:3000/api'],
+      ['http://127.0.0.1:3000/api/docs', 'http://localhost:3000/api/docs'],
+      ['http://127.0.0.1:3000/admin', 'http://localhost:3000/admin'],
+      ['http://127.0.0.1:3000/admin/posts/new', 'http://localhost:3000/admin/posts/new'],
     ],
-    commandArgs: ['.nx/nxw.js', 'serve', 'api', '--configuration=production'],
-    env: {
-      ADMIN_DEV_PROXY: 'false',
-    },
+    commandArgs: ['.nx/nxw.js', 'serve', 'admin', '--configuration=production'],
   },
   {
     name: 'site',
     port: 4200,
-    healthUrls: ['http://127.0.0.1:4200/zh', 'http://localhost:4200/zh'],
+    healthChecks: [['http://127.0.0.1:4200/zh', 'http://localhost:4200/zh']],
     commandArgs: ['.nx/nxw.js', 'serve', 'site'],
   },
 ];
@@ -60,7 +57,7 @@ async function main() {
         continue;
       }
 
-      const healthy = await isAnyHealthUrlReachable(service.healthUrls);
+      const healthy = await areHealthChecksReachable(service.healthChecks);
       if (healthy) {
         console.log(`[${service.name}] port ${service.port} already in use and healthy, reusing existing service`);
         continue;
@@ -143,15 +140,8 @@ async function waitForHealthOrExit(service, exitPromise) {
       throw new Error(`[${service.name}] exited before becoming healthy`);
     }
 
-    for (const url of service.healthUrls) {
-      try {
-        const response = await fetch(url, { redirect: 'manual' });
-        if (response.status < 500) {
-          return;
-        }
-      } catch {
-        // Service may still be booting; try next fallback URL.
-      }
+    if (await areHealthChecksReachable(service.healthChecks)) {
+      return;
     }
 
     const elapsedMs = Date.now() - start;
@@ -166,7 +156,7 @@ async function waitForHealthOrExit(service, exitPromise) {
   }
 
   throw new Error(
-    `[${service.name}] health check timeout after ${TIMEOUT_MS / 1000}s: ${service.healthUrls.join(', ')}`,
+    `[${service.name}] health check timeout after ${TIMEOUT_MS / 1000}s: ${flattenHealthChecks(service.healthChecks).join(', ')}`,
   );
 }
 
@@ -245,18 +235,29 @@ async function isPortFree(port) {
   }
 }
 
-async function isAnyHealthUrlReachable(healthUrls) {
-  for (const url of healthUrls) {
-    try {
-      const response = await fetch(url, { redirect: 'manual' });
-      if (response.status < 500) {
-        return true;
+async function areHealthChecksReachable(healthChecks) {
+  for (const urls of healthChecks) {
+    let reachable = false;
+    for (const url of urls) {
+      try {
+        const response = await fetch(url, { redirect: 'manual' });
+        if (response.status < 500) {
+          reachable = true;
+          break;
+        }
+      } catch {
+        // try next fallback URL
       }
-    } catch {
-      // try next fallback URL
+    }
+    if (!reachable) {
+      return false;
     }
   }
-  return false;
+  return true;
+}
+
+function flattenHealthChecks(healthChecks) {
+  return healthChecks.flat();
 }
 
 function tryReleasePort(port) {
@@ -357,8 +358,12 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-main().catch(async (error) => {
-  console.error(`Health check failed: ${error.message}`);
-  await stopAllChildren();
-  process.exit(1);
-});
+main()
+  .then(() => {
+    process.exit(0);
+  })
+  .catch(async (error) => {
+    console.error(`Health check failed: ${error.message}`);
+    await stopAllChildren();
+    process.exit(1);
+  });
