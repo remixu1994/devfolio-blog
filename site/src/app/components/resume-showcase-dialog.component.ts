@@ -21,22 +21,22 @@ import {
   },
   template: `
     @if (showcase(); as showcase) {
-      <div
-        class="flex h-full w-full justify-end"
-        tabindex="0"
-        role="button"
-        aria-label="Close showcase"
-        (click)="onOverlayClick($event)"
-        (keydown.enter)="closeDialog()"
-        (keydown.space)="onOverlaySpace($event)"
-      >
+      <div class="relative flex h-full w-full justify-end">
+        <div
+          class="absolute inset-0"
+          tabindex="0"
+          aria-label="Close showcase"
+          (click)="onOverlayClick($event)"
+          (keydown.enter)="onOverlayEnter($event)"
+          (keydown.space)="onOverlaySpace($event)"
+        ></div>
         <aside
-          class="flex h-full w-full max-w-[56rem] flex-col border-l border-[color:var(--border-color)] bg-[color:var(--surface)] shadow-[-24px_0_60px_rgba(23,32,51,0.16)]"
+          class="relative z-10 flex h-full w-full max-w-4xl flex-col border-l border-(--border-color) bg-(--surface) shadow-[-24px_0_60px_rgba(23,32,51,0.16)]"
         >
-          <header class="border-b border-[color:var(--border-color)] bg-white px-5 py-5 md:px-8">
+          <header class="border-b border-(--border-color) bg-white px-5 py-5 md:px-8">
             <div class="flex items-start justify-between gap-4">
               <div>
-                <p class="font-[var(--font-mono)] text-[10px] uppercase tracking-[0.28em] text-[color:var(--accent)]">
+                <p class="font-(--font-mono) text-[10px] uppercase tracking-[0.28em] text-(--accent)">
                   {{ data.project.title }}
                 </p>
                 <h2 class="mt-3 text-3xl font-semibold text-[color:var(--ink)]">{{ activeSectionTitle() }}</h2>
@@ -181,7 +181,20 @@ export class ResumeShowcaseDialogComponent {
     }
   }
 
+  onOverlayEnter(event: Event) {
+    if (event.target !== event.currentTarget) {
+      return;
+    }
+
+    event.preventDefault();
+    this.closeDialog();
+  }
+
   onOverlaySpace(event: Event) {
+    if (event.target !== event.currentTarget) {
+      return;
+    }
+
     event.preventDefault();
     this.closeDialog();
   }

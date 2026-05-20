@@ -200,7 +200,13 @@ export class ResumePageComponent {
       return;
     }
 
+    const dialogId = this.getShowcaseDialogId(project);
+    if (this.dialog.getDialogById(dialogId)) {
+      return;
+    }
+
     this.dialog.open(ResumeShowcaseDialogComponent, {
+      id: dialogId,
       data: {
         project,
         labels: this.viewModel().resume.labels,
@@ -214,5 +220,9 @@ export class ResumePageComponent {
       height: '100vh',
       maxHeight: '100vh',
     });
+  }
+
+  private getShowcaseDialogId(project: ResumeProject) {
+    return `resume-showcase-${project.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
   }
 }
