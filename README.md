@@ -10,9 +10,10 @@
 
 ## Workspace
 
-- `site/`: Angular SSR 公共站点
-- `admin/`: Angular 内容后台
-- `api/`: NestJS REST API
+- `apps/site/`: Angular SSR 公共站点
+- `apps/admin/`: Angular 内容后台
+- `apps/api/`: NestJS REST API
+- `apps/site-e2e/`: Playwright E2E tests
 - `libs/`: 共享类型、内容数据、i18n、Markdown 与 UI 基础组件
 
 ## 服务启动与加载说明

@@ -4,7 +4,9 @@
   "private": true,
   "packageManager": "npm@10.9.2",
   "scripts": {
+    "prepare": "npm run setup:hooks",
     "nx": "node .nx/nxw.js",
+    "setup:hooks": "node tools/git-hooks/setup-hooks.mjs",
     "start:site": "node .nx/nxw.js serve site",
     "start:site:hmr": "node .nx/nxw.js serve site --configuration=development",
     "start:admin": "node .nx/nxw.js serve admin",
@@ -74,6 +76,7 @@
   },
   "dependencies": {
     "@angular-devkit/build-angular": "~21.2.0",
+    "@angular/cdk": "~21.2.0",
     "@angular/common": "~21.2.0",
     "@angular/compiler": "~21.2.0",
     "@angular/core": "~21.2.0",
@@ -87,6 +90,7 @@
     "@nestjs/core": "^11.0.0",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.0",
+    "@nestjs/swagger": "^11.4.3",
     "@nestjs/typeorm": "^11.0.1",
     "@tailwindcss/postcss": "^4.3.0",
     "class-transformer": "^0.5.1",
@@ -101,6 +105,7 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "~7.8.0",
     "sql.js": "^1.14.1",
+    "swagger-ui-express": "^5.0.1",
     "tailwindcss": "^4.3.0",
     "typeorm": "^0.3.29",
     "zod": "^4.4.3"

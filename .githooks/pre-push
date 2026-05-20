@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+repo_root="$(git rev-parse --show-toplevel)"
+
+echo "[pre-push] Running local npm ci check before push..."
+
+cd "$repo_root"
+npm ci
+
+echo "[pre-push] Running local lint check before push..."
+npm run lint
+
+echo "[pre-push] npm ci and lint passed. Continuing push."
