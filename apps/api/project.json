@@ -1,16 +1,16 @@
 {
   "name": "api",
-  "$schema": "../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "api/src",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/api/src",
   "projectType": "application",
   "tags": [],
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node ../node_modules/webpack-cli/bin/cli.js build",
+        "command": "node ../../node_modules/webpack-cli/bin/cli.js build",
         "args": ["--node-env=production"],
-        "cwd": "api"
+        "cwd": "apps/api"
       },
       "configurations": {
         "development": {
@@ -61,11 +61,18 @@
         }
       }
     },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node ../../node_modules/eslint/bin/eslint.js .",
+        "cwd": "apps/api"
+      }
+    },
     "test": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node ../node_modules/jest/bin/jest.js --config jest.config.cts --passWithNoTests",
-        "cwd": "api"
+        "command": "node ../../node_modules/jest/bin/jest.js --config jest.config.cts --passWithNoTests",
+        "cwd": "apps/api"
       }
     }
   }

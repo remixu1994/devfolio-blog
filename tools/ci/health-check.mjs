@@ -53,8 +53,8 @@ async function main() {
 }
 
 async function assertProjectConfig() {
-  const siteProject = JSON.parse(await readFile(path.join(ROOT, 'site', 'project.json'), 'utf8'));
-  const adminProject = JSON.parse(await readFile(path.join(ROOT, 'admin', 'project.json'), 'utf8'));
+  const siteProject = JSON.parse(await readFile(path.join(ROOT, 'apps', 'site', 'project.json'), 'utf8'));
+  const adminProject = JSON.parse(await readFile(path.join(ROOT, 'apps', 'admin', 'project.json'), 'utf8'));
 
   const siteAllowedHosts = siteProject?.targets?.serve?.options?.allowedHosts;
   const hasLocalhost = Array.isArray(siteAllowedHosts) && siteAllowedHosts.includes('localhost');

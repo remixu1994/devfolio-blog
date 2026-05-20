@@ -1,9 +1,9 @@
 {
   "name": "site",
-  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "prefix": "app",
-  "sourceRoot": "site/src",
+  "sourceRoot": "apps/site/src",
   "tags": [],
   "targets": {
     "build": {
@@ -11,19 +11,19 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/site",
-        "browser": "site/src/main.ts",
-        "tsConfig": "site/tsconfig.app.json",
+        "browser": "apps/site/src/main.ts",
+        "tsConfig": "apps/site/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
           {
             "glob": "**/*",
-            "input": "site/public"
+            "input": "apps/site/public"
           }
         ],
-        "styles": ["site/src/styles.css"],
-        "server": "site/src/main.server.ts",
+        "styles": ["apps/site/src/styles.css"],
+        "server": "apps/site/src/main.server.ts",
         "ssr": {
-          "entry": "site/src/server.ts"
+          "entry": "apps/site/src/server.ts"
         },
         "outputMode": "server"
       },

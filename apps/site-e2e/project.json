@@ -1,0 +1,17 @@
+{
+  "name": "site-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/site-e2e/src",
+  "implicitDependencies": ["site"],
+  "// targets": "to see all targets run: nx show project site-e2e --web",
+  "targets": {
+    "e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node ../../node_modules/playwright/cli.js test",
+        "cwd": "apps/site-e2e"
+      }
+    }
+  }
+}

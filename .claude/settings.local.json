@@ -9,7 +9,20 @@
       "Bash(taskkill //F //PID 3108)",
       "Bash(taskkill //F //PID 42404)",
       "Bash(npm run *)",
-      "Bash(node .nx/nxw.js build site)"
+      "Bash(node .nx/nxw.js build site)",
+      "Bash(git reset *)",
+      "Bash(git push *)",
+      "Bash(node -e \"const pkg = require\\('./node_modules/@angular/platform-server/package.json'\\); console.log\\(JSON.stringify\\(pkg.exports, null, 2\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); s=d.get\\('projects',{}\\).get\\('site',{}\\).get\\('architect',{}\\).get\\('build',{}\\).get\\('options',{}\\); print\\(json.dumps\\({k:v for k,v in s.items\\(\\) if 'server' in k.lower\\(\\) or 'ssr' in k.lower\\(\\) or 'polyfill' in k.lower\\(\\)}, indent=2\\)\\)\")",
+      "Bash(node -e \"const d=require\\('./angular.json'\\); const o=d.projects?.site?.architect?.build?.options||{}; for\\(const [k,v] of Object.entries\\(o\\)\\){if\\(/server|ssr|polyfill/i.test\\(k\\)\\)console.log\\(k,JSON.stringify\\(v\\)\\)}\")",
+      "Bash(find . -name \"angular.json\" -maxdepth 2)",
+      "Bash(find . -name \"project.json\" -maxdepth 3)",
+      "Bash(node -e \"const pkg=require\\('./package.json'\\); const deps={...pkg.dependencies,...pkg.devDependencies}; for\\(const [k,v] of Object.entries\\(deps\\).filter\\(\\([k]\\)=>k.includes\\('angular'\\)||k.includes\\('nx'\\)\\)\\)console.log\\(k,v\\)\")",
+      "Bash(node -e \"['@angular/platform-server','@angular/ssr','@angular/build','@angular/core'].forEach\\(p=>{try{const v=require\\(p+'/package.json'\\).version;console.log\\(p,v\\)}catch\\(e\\){console.log\\(p,'NOT INSTALLED'\\)}}\\)\")",
+      "Bash(node -e \"const pkg=require\\('./node_modules/@angular/platform-server/package.json'\\); console.log\\('exports[./init]:', JSON.stringify\\(pkg.exports['./init']\\)\\)\")",
+      "Bash(node -e \"const pkg=require\\('./node_modules/nx/package.json'\\); console.log\\('nx version:', pkg.version\\)\")",
+      "Bash(node -e ' *)",
+      "Bash(node -e \"console.log\\(require\\('esbuild'\\).version\\)\")"
     ]
   }
 }

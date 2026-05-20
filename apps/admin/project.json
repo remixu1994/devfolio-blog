@@ -1,9 +1,9 @@
 {
   "name": "admin",
-  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "prefix": "app",
-  "sourceRoot": "admin/src",
+  "sourceRoot": "apps/admin/src",
   "tags": [],
   "targets": {
     "build": {
@@ -11,16 +11,16 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/admin",
-        "browser": "admin/src/main.ts",
-        "tsConfig": "admin/tsconfig.app.json",
+        "browser": "apps/admin/src/main.ts",
+        "tsConfig": "apps/admin/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
           {
             "glob": "**/*",
-            "input": "admin/public"
+            "input": "apps/admin/public"
           }
         ],
-        "styles": ["admin/src/styles.css"]
+        "styles": ["apps/admin/src/styles.css"]
       },
       "configurations": {
         "production": {
