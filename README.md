@@ -61,14 +61,13 @@ npm run start:site
 ```
 
 ```powershell
-node .nx/nxw.js serve admin --port=4300
+npm run start:admin
 ```
 
 默认访问地址：
 
 - Site dev server (HMR): `http://localhost:4200`
-- Admin: `http://localhost:4300`
-- API: `http://localhost:3000/api`
+- API + Admin: `http://localhost:3000` (`/api`, `/api/docs`, `/admin`)
 
 加载关系：
 
@@ -97,7 +96,7 @@ npm run preview:admin
 预览地址：
 
 - Site preview: `http://localhost:4210`
-- Admin preview: `http://localhost:4300`
+- Admin preview (via API host): `http://localhost:3000/admin`
 
 注意：静态预览读取 `dist/site/browser` 和 `dist/admin/browser`。修改源码后需要重新运行 `npm run build`，预览页面才会加载新的构建产物。
 
@@ -118,9 +117,8 @@ docker compose up -d postgres
 Docker Compose 会覆盖 API 的数据库配置为 PostgreSQL，服务端口：
 
 - Postgres: `localhost:5432`
-- API: `http://localhost:3000/api`
+- API + Admin: `http://localhost:3000` (`/api`, `/api/docs`, `/admin`)
 - Site: `http://localhost:4200`
-- Admin: `http://localhost:4300`
 
 ### 5. 常用校验
 

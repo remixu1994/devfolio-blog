@@ -4,29 +4,32 @@ import { spawn, spawnSync } from 'node:child_process';
 import path from 'node:path';
 
 const ROOT = process.cwd();
-const TIMEOUT_MS = 60_000;
+const TIMEOUT_MS = 120_000;
 const POLL_MS = 1_000;
 const PROGRESS_LOG_INTERVAL_MS = 5_000;
 const LOG_TAIL_LINES = 120;
+const FORCE_FRESH = process.argv.includes('--fresh');
 
 const services = [
   {
     name: 'api',
     port: 3000,
-    healthUrls: ['http://127.0.0.1:3000/api', 'http://localhost:3000/api'],
-    commandArgs: ['.nx/nxw.js', 'serve', 'api'],
+    healthUrls: [
+      'http://127.0.0.1:3000/api',
+      'http://localhost:3000/api',
+      'http://127.0.0.1:3000/admin',
+      'http://localhost:3000/admin',
+    ],
+    commandArgs: ['.nx/nxw.js', 'serve', 'api', '--configuration=production'],
+    env: {
+      ADMIN_DEV_PROXY: 'false',
+    },
   },
   {
     name: 'site',
     port: 4200,
     healthUrls: ['http://127.0.0.1:4200/zh', 'http://localhost:4200/zh'],
     commandArgs: ['.nx/nxw.js', 'serve', 'site'],
-  },
-  {
-    name: 'admin',
-    port: 4300,
-    healthUrls: ['http://127.0.0.1:4300/', 'http://localhost:4300/'],
-    commandArgs: ['.nx/nxw.js', 'serve', 'admin'],
   },
 ];
 
@@ -48,6 +51,15 @@ async function main() {
   for (const service of services) {
     const portFree = await isPortFree(service.port);
     if (!portFree) {
+      if (FORCE_FRESH) {
+        await ensurePortIsFree(service.port, service.name);
+      }
+
+      if (FORCE_FRESH) {
+        await verifyServiceStartup(service);
+        continue;
+      }
+
       const healthy = await isAnyHealthUrlReachable(service.healthUrls);
       if (healthy) {
         console.log(`[${service.name}] port ${service.port} already in use and healthy, reusing existing service`);
@@ -65,7 +77,6 @@ async function main() {
 
 async function assertProjectConfig() {
   const siteProject = JSON.parse(await readFile(path.join(ROOT, 'apps', 'site', 'project.json'), 'utf8'));
-  const adminProject = JSON.parse(await readFile(path.join(ROOT, 'apps', 'admin', 'project.json'), 'utf8'));
 
   const siteAllowedHosts = siteProject?.targets?.serve?.options?.allowedHosts;
   const hasLocalhost = Array.isArray(siteAllowedHosts) && siteAllowedHosts.includes('localhost');
@@ -76,11 +87,6 @@ async function assertProjectConfig() {
       `site serve allowedHosts must include localhost and 127.0.0.1; current value: ${JSON.stringify(siteAllowedHosts)}`,
     );
   }
-
-  const adminPort = adminProject?.targets?.serve?.options?.port;
-  if (adminPort !== 4300) {
-    throw new Error(`admin serve port must be 4300; current value: ${JSON.stringify(adminPort)}`);
-  }
 }
 
 async function verifyServiceStartup(service) {
@@ -90,7 +96,7 @@ async function verifyServiceStartup(service) {
   const child = spawn(process.execPath, service.commandArgs, {
     cwd: ROOT,
     stdio: ['ignore', 'pipe', 'pipe'],
-    env: process.env,
+    env: { ...process.env, ...service.env },
   });
 
   runningChildren.add(child);

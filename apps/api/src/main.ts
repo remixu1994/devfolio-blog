@@ -1,10 +1,20 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { createProxyMiddleware } from 'http-proxy-middleware';
+import express from 'express';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
+import type { Request, Response } from 'express';
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const expressApp = app.getHttpAdapter().getInstance();
+  const adminDistPath = path.join(process.cwd(), 'dist', 'api', 'admin');
+  const isDevelopment = process.env.NODE_ENV !== 'production';
+  const adminDevProxyEnabled = process.env.ADMIN_DEV_PROXY !== 'false';
+  const adminDevServerUrl = process.env.ADMIN_DEV_SERVER_URL ?? 'http://localhost:4300';
 
   app.enableCors({
     origin: true,
@@ -32,6 +42,23 @@ async function bootstrap() {
       persistAuthorization: true,
     },
   });
+
+  if (isDevelopment && adminDevProxyEnabled) {
+    expressApp.use(
+      '/admin',
+      createProxyMiddleware({
+        target: adminDevServerUrl,
+        changeOrigin: true,
+        ws: true,
+        pathRewrite: { '^/admin': '/' },
+      }),
+    );
+  } else if (existsSync(adminDistPath)) {
+    expressApp.use('/admin', express.static(adminDistPath));
+    expressApp.get('/admin/*', (_request: Request, response: Response) => {
+      response.sendFile(path.join(adminDistPath, 'index.html'));
+    });
+  }
 
   const port = Number(process.env.PORT ?? 3000);
   await app.listen(port);

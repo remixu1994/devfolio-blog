@@ -13,6 +13,7 @@
         "outputPath": "dist/admin",
         "browser": "apps/admin/src/main.ts",
         "tsConfig": "apps/admin/tsconfig.app.json",
+        "baseHref": "/admin/",
         "inlineStyleLanguage": "scss",
         "assets": [
           {
