@@ -34,9 +34,6 @@
             "styles": true,
             "fonts": { "inline": false }
           },
-          "security": {
-            "allowedHosts": ["localhost", "127.0.0.1"]
-          },
           "budgets": [
             {
               "type": "initial",

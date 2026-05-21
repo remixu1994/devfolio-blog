@@ -122,9 +122,6 @@ import { RecipeRepository } from '../recipes/recipe.repository';
               <table class="mt-4 w-full text-sm">
                 <tbody>
                   <tr class="border-t border-(--border-color)"><td class="py-2 text-(--muted)">热量</td><td class="py-2 text-right font-semibold">{{ item.calories ?? '-' }} kcal</td></tr>
-                  <tr class="border-t border-(--border-color)"><td class="py-2 text-(--muted)">蛋白质</td><td class="py-2 text-right font-semibold">38 g</td></tr>
-                  <tr class="border-t border-(--border-color)"><td class="py-2 text-(--muted)">脂肪</td><td class="py-2 text-right font-semibold">30 g</td></tr>
-                  <tr class="border-t border-(--border-color)"><td class="py-2 text-(--muted)">碳水</td><td class="py-2 text-right font-semibold">8 g</td></tr>
                 </tbody>
               </table>
             </section>

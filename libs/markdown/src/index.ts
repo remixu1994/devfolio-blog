@@ -98,12 +98,9 @@ export function parseRecipeMarkdown(markdown: string): RecipeDetail {
 
   const tips = parseBullets(parsed.sections.get('关键提示') ?? []);
   const nutritionNotes = parseBullets(parsed.sections.get('营养说明') ?? []);
-  const methodImageSection = parseKeyValueLines(requireSection(parsed.sections, '做法图'), '做法图');
+  const methodImageSection = parseKeyValueLines(parsed.sections.get('做法图') ?? [], '做法图');
   const methodImage = methodImageSection.values['image']?.trim() || undefined;
-  if (!methodImage) {
-    throw new RecipeMarkdownParseError('MISSING_METHOD_IMAGE', '做法图缺少 image 字段。', '做法图', methodImageSection.firstLine, '请补充 "- image: /recipes/images/xxx.png"');
-  }
-  const downloadFileName = methodImageSection.values['downloadFileName']?.trim() || `${slug}-steps.png`;
+  const downloadFileName = methodImage ? methodImageSection.values['downloadFileName']?.trim() || `${slug}-steps.png` : undefined;
 
   return {
     slug,

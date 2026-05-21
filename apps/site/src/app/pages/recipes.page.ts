@@ -177,8 +177,12 @@ export class RecipesPageComponent {
 
   difficultyLabel(value: RecipeDifficulty) {
     if (this.locale() === 'zh') {
-      return value === 'easy' ? '简单' : '中等';
+      if (value === 'easy') return '简单';
+      if (value === 'medium') return '中等';
+      return '困难';
     }
-    return value === 'easy' ? 'Easy' : 'Medium';
+    if (value === 'easy') return 'Easy';
+    if (value === 'medium') return 'Medium';
+    return 'Hard';
   }
 }

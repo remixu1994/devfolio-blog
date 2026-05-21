@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { parseRecipeMarkdown } from '@devfolio-blog/markdown';
 import type { Locale, RecipeDetail, RecipeQuery, RecipeSummary } from '@devfolio-blog/shared-types';
-import { catchError, combineLatest, forkJoin, map, of, switchMap } from 'rxjs';
+import { catchError, combineLatest, forkJoin, map, of, startWith } from 'rxjs';
 
 type MdRecipeSource = {
   slug: string;
@@ -20,14 +20,15 @@ export class RecipeRepository {
 
   listRecipes(query: RecipeQuery) {
     const locale = query.locale ?? 'zh';
-    return combineLatest([this.listFromMd(locale), this.listFromApi(query)]).pipe(
+    const normalizedQuery = { ...query, locale };
+    return combineLatest([this.listFromMd(normalizedQuery), this.listFromApi(normalizedQuery)]).pipe(
       map(([mdItems, apiItems]) => {
         const bySlug = new Map<string, RecipeSummary>();
         for (const item of mdItems) bySlug.set(item.slug, item);
         for (const item of apiItems) {
           if (!bySlug.has(item.slug)) bySlug.set(item.slug, item);
         }
-        return [...bySlug.values()];
+        return paginateRecipes([...bySlug.values()], normalizedQuery);
       }),
     );
   }
@@ -43,11 +44,12 @@ export class RecipeRepository {
     );
   }
 
-  private listFromMd(locale: Locale) {
+  private listFromMd(query: RecipeQuery & { locale: Locale }) {
+    const { locale } = query;
     const matched = mdRecipes.filter((item) => item.locale === locale);
     if (matched.length === 0) return of([] as RecipeSummary[]);
     return forkJoin(matched.map((item) => this.fetchMd(item.markdownUrl))).pipe(
-      map((items) => items.map((item) => toSummary(item))),
+      map((items) => items.map((item) => toSummary(item)).filter((item) => matchesRecipeQuery(item, query))),
       catchError(() => of([] as RecipeSummary[])),
     );
   }
@@ -73,12 +75,11 @@ export class RecipeRepository {
     if (query.category) params = params.set('category', query.category);
     if (query.tag) params = params.set('tag', query.tag);
     if (query.search) params = params.set('search', query.search);
-    if (query.page) params = params.set('page', String(query.page));
-    if (query.pageSize) params = params.set('pageSize', String(query.pageSize));
 
     return this.http.get<RecipeSummary[]>('/api/public/recipes', { params }).pipe(
-      map((items) => (Array.isArray(items) ? items : [])),
+      map((items) => (Array.isArray(items) ? items.filter((item) => matchesRecipeQuery(item, query)) : [])),
       catchError(() => of([] as RecipeSummary[])),
+      startWith([] as RecipeSummary[]),
     );
   }
 
@@ -87,6 +88,7 @@ export class RecipeRepository {
     return this.http.get<RecipeDetail>(`/api/public/recipes/${slug}`, { params }).pipe(
       map((item) => item ?? null),
       catchError(() => of(null)),
+      startWith(null),
     );
   }
 }
@@ -125,4 +127,24 @@ function mergeRecipeDetail(mdItem: RecipeDetail, apiItem: RecipeDetail): RecipeD
     html: mdItem.html || apiItem.html,
     source: 'md',
   };
+}
+
+function matchesRecipeQuery(item: RecipeSummary, query: RecipeQuery): boolean {
+  if (query.category && item.category !== query.category) return false;
+  if (query.tag && !item.tags.includes(query.tag)) return false;
+
+  const search = query.search?.trim().toLowerCase();
+  if (!search) return true;
+
+  const haystack = [item.title, item.summary, item.category, ...item.tags].join(' ').toLowerCase();
+  return haystack.includes(search);
+}
+
+function paginateRecipes(items: RecipeSummary[], query: RecipeQuery): RecipeSummary[] {
+  const pageSize = query.pageSize && query.pageSize > 0 ? Math.floor(query.pageSize) : undefined;
+  if (!pageSize) return items;
+
+  const page = query.page && query.page > 0 ? Math.floor(query.page) : 1;
+  const start = (page - 1) * pageSize;
+  return items.slice(start, start + pageSize);
 }
