@@ -7,10 +7,26 @@ import path from 'node:path';
 import type { Request, Response } from 'express';
 import { AppModule } from './app/app.module';
 
+function resolveAdminDistPath() {
+  const runtimeEntryPath = process.argv[1] ? path.resolve(process.argv[1]) : null;
+  const runtimeDir = runtimeEntryPath ? path.dirname(runtimeEntryPath) : null;
+  const runtimeCandidates = runtimeDir
+    ? [path.join(runtimeDir, 'admin'), path.resolve(runtimeDir, '..', 'admin'), path.resolve(runtimeDir, '..', '..', 'admin')]
+    : [];
+
+  for (const candidate of runtimeCandidates) {
+    if (existsSync(candidate)) {
+      return candidate;
+    }
+  }
+
+  return path.join(process.cwd(), 'dist', 'admin', 'admin');
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const expressApp = app.getHttpAdapter().getInstance();
-  const adminDistPath = path.join(process.cwd(), 'dist', 'admin', 'admin');
+  const adminDistPath = resolveAdminDistPath();
 
   app.enableCors({
     origin: true,
