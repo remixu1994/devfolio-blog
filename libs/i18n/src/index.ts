@@ -10,6 +10,7 @@ export interface SiteDictionary {
     books: string;
     unraid: string;
     fitness: string;
+    recipes: string;
     blog: string;
     admin: string;
   };
@@ -63,7 +64,8 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
       architecture: '架构设计',
       books: '书籍推荐',
       unraid: 'Unraid NAS',
-      fitness: '健身 AI Agent',
+      fitness: '健身',
+      recipes: '食谱分享',
       blog: '技术博客',
       admin: '后台',
     },
@@ -86,7 +88,7 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     },
     blog: {
       title: '技术博客',
-      intro: '围绕架构、工程效率、NAS 自托管和 AI Agent 实战进行沉淀。',
+      intro: '围绕工程效率、系统交付、健身实践与 AI 工程化进行沉淀。',
       empty: '暂时还没有符合条件的文章。',
     },
     topic: {
@@ -116,7 +118,8 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
       architecture: 'Architecture',
       books: 'Books',
       unraid: 'Unraid NAS',
-      fitness: 'Fitness AI Agent',
+      fitness: 'Fitness',
+      recipes: 'Recipes',
       blog: 'Blog',
       admin: 'Admin',
     },
@@ -139,7 +142,7 @@ export const dictionaries: Record<Locale, SiteDictionary> = {
     },
     blog: {
       title: 'Technical Blog',
-      intro: 'Notes on architecture, delivery quality, NAS self-hosting, and AI agent experiments.',
+      intro: 'Notes on engineering efficiency, delivery quality, fitness practice, and AI engineering experiments.',
       empty: 'No published posts yet.',
     },
     topic: {

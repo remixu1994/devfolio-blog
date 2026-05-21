@@ -24,10 +24,9 @@ export function getShellLinks(locale: Locale) {
   return [
     { label: dictionaries[locale].nav.home, href: withLocalePath(locale) },
     { label: dictionaries[locale].nav.resume, href: withLocalePath(locale, 'resume') },
-    { label: dictionaries[locale].nav.architecture, href: withLocalePath(locale, 'architecture') },
     { label: dictionaries[locale].nav.books, href: withLocalePath(locale, 'books') },
-    { label: dictionaries[locale].nav.unraid, href: withLocalePath(locale, 'unraid') },
-    { label: dictionaries[locale].nav.fitness, href: withLocalePath(locale, 'fitness-ai-agent') },
+    { label: dictionaries[locale].nav.fitness, href: withLocalePath(locale, 'fitness') },
+    { label: dictionaries[locale].nav.recipes, href: withLocalePath(locale, 'recipes') },
     { label: dictionaries[locale].nav.blog, href: withLocalePath(locale, 'blog') },
   ];
 }
@@ -124,6 +123,7 @@ export function getBlogDetailViewModel(locale: Locale, slug: string) {
       }
     : null;
 }
+
 
 function getPublishedPosts(locale: Locale): PublicPost[] {
   return seedPosts

@@ -202,3 +202,56 @@ export interface MediaAssetDto {
   mimeType: string;
   createdAt: string;
 }
+
+export type RecipeCategory = 'muscle' | 'fat-loss' | 'balanced';
+export type RecipeTag = 'high-protein' | 'low-fat' | 'quick';
+export type RecipeDifficulty = 'easy' | 'medium' | 'hard';
+export type RecipeSource = 'md' | 'api';
+
+export interface RecipeIngredient {
+  name: string;
+  amount: string;
+  note?: string;
+}
+
+export interface RecipeStep {
+  title: string;
+  bullets: string[];
+}
+
+export interface RecipeSummary {
+  slug: string;
+  locale: Locale;
+  title: string;
+  summary: string;
+  category: RecipeCategory;
+  tags: RecipeTag[];
+  durationMinutes: number;
+  difficulty: RecipeDifficulty;
+  calories?: number;
+  coverImage?: string;
+  updatedAt: string;
+  source: RecipeSource;
+}
+
+export interface RecipeDetail extends RecipeSummary {
+  servings: string;
+  ingredients: RecipeIngredient[];
+  seasonings: RecipeIngredient[];
+  sauce: RecipeIngredient[];
+  steps: RecipeStep[];
+  tips: string[];
+  nutritionNotes: string[];
+  methodImage?: string;
+  downloadFileName?: string;
+  html: string;
+}
+
+export interface RecipeQuery {
+  locale?: Locale;
+  category?: RecipeCategory;
+  tag?: RecipeTag;
+  search?: string;
+  page?: number;
+  pageSize?: number;
+}
