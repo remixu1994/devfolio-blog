@@ -31,4 +31,10 @@ export default [
     // Override or add rules here
     rules: {},
   },
+  {
+    files: ['api/**/*.ts', 'apps/admin/api/**/*.ts', '**/api/**/*.ts'],
+    rules: {
+      '@angular-eslint/prefer-inject': 'off',
+    },
+  },
 ];

@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class AdminApiService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'http://localhost:3000/api';
+  private readonly baseUrl = '/api';
 
   getPosts(): Observable<PublicPost[]> {
     return this.http.get<PublicPost[]>(`${this.baseUrl}/admin/posts`);

@@ -11,8 +11,9 @@
 ## Workspace
 
 - `apps/site/`: Angular SSR 公共站点
-- `apps/admin/`: Angular 内容后台
-- `apps/api/`: NestJS REST API
+- `apps/admin/`: Admin + API 统一后台服务
+  - `apps/admin/ui/`: Angular 内容后台
+  - `apps/admin/api/`: NestJS REST API
 - `apps/site-e2e/`: Playwright E2E tests
 - `libs/`: 共享类型、内容数据、i18n、Markdown 与 UI 基础组件
 
@@ -50,31 +51,25 @@ DATABASE_URL=postgres://postgres:postgres@localhost:5432/devfolio_blog
 
 ### 2. 开发模式启动
 
-开发模式适合日常改代码，支持 Angular / NestJS 的开发构建与自动刷新。建议分别打开三个终端：
-
-```powershell
-npm run start:api
-```
+开发模式适合日常改代码。建议分别打开两个终端：
 
 ```powershell
 npm run start:site
 ```
 
 ```powershell
-node .nx/nxw.js serve admin --port=4300
+npm run start:admin
 ```
 
 默认访问地址：
 
 - Site dev server (HMR): `http://localhost:4200`
-- Admin: `http://localhost:4300`
-- API: `http://localhost:3000/api`
+- API + Admin: `http://localhost:3000` (`/api`, `/api/docs`, `/admin`)
 
 加载关系：
 
-- `site` 是公共站点，加载仓库内共享内容数据，并可调用 `api` 的公共文章接口。
-- `admin` 是内容后台，主要调用 `api` 的后台文章、媒体和认证接口。
-- `api` 是 NestJS 服务，读取 `.env` 配置；本地默认连接 SQLite，也可以通过 `DATABASE_TYPE=postgres` 切换到 PostgreSQL。
+- `site` 是公共站点，加载仓库内共享内容数据，并可调用后台服务的公共文章接口。
+- `admin` 是统一后台服务，包含 Angular 内容后台与 NestJS API，读取 `.env` 配置；本地默认连接 SQLite，也可以通过 `DATABASE_TYPE=postgres` 切换到 PostgreSQL。
 
 ### 3. 构建后静态预览
 
@@ -84,7 +79,7 @@ node .nx/nxw.js serve admin --port=4300
 npm run build
 ```
 
-然后启动静态预览：
+然后启动预览：
 
 ```powershell
 npm run preview:site
@@ -97,9 +92,9 @@ npm run preview:admin
 预览地址：
 
 - Site preview: `http://localhost:4210`
-- Admin preview: `http://localhost:4300`
+- Admin preview (via API host): `http://localhost:3000/admin`
 
-注意：静态预览读取 `dist/site/browser` 和 `dist/admin/browser`。修改源码后需要重新运行 `npm run build`，预览页面才会加载新的构建产物。
+注意：Site 静态预览读取 `dist/site/browser`；Admin 预览启动统一后台服务，并从 `dist/admin/admin` 托管后台页面。修改源码后需要重新运行 `npm run build`，预览页面才会加载新的构建产物。
 
 ### 4. Docker Compose 启动
 
@@ -115,12 +110,11 @@ docker compose up
 docker compose up -d postgres
 ```
 
-Docker Compose 会覆盖 API 的数据库配置为 PostgreSQL，服务端口：
+Docker Compose 会覆盖 Admin + API 后台服务的数据库配置为 PostgreSQL，服务端口：
 
 - Postgres: `localhost:5432`
-- API: `http://localhost:3000/api`
+- API + Admin: `http://localhost:3000` (`/api`, `/api/docs`, `/admin`)
 - Site: `http://localhost:4200`
-- Admin: `http://localhost:4300`
 
 ### 5. 常用校验
 

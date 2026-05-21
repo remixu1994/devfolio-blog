@@ -17,3 +17,5 @@ devfolio-home.png
 __screenshots__/
 
 vitest.config.*.timestamp*
+
+.claude/settings.local.json
