@@ -14,12 +14,7 @@ const services = [
   {
     name: 'admin',
     port: 3000,
-    healthChecks: [
-      ['http://127.0.0.1:3000/api', 'http://localhost:3000/api'],
-      ['http://127.0.0.1:3000/api/docs', 'http://localhost:3000/api/docs'],
-      ['http://127.0.0.1:3000/admin', 'http://localhost:3000/admin'],
-      ['http://127.0.0.1:3000/admin/posts/new', 'http://localhost:3000/admin/posts/new'],
-    ],
+    healthChecks: [['http://127.0.0.1:3000/api/health', 'http://localhost:3000/api/health']],
     commandArgs: ['.nx/nxw.js', 'serve', 'admin', '--configuration=production'],
   },
   {
@@ -241,7 +236,7 @@ async function areHealthChecksReachable(healthChecks) {
     for (const url of urls) {
       try {
         const response = await fetch(url, { redirect: 'manual' });
-        if (response.status < 500) {
+        if (isHealthyStatus(response.status)) {
           reachable = true;
           break;
         }
@@ -254,6 +249,10 @@ async function areHealthChecksReachable(healthChecks) {
     }
   }
   return true;
+}
+
+function isHealthyStatus(status) {
+  return status >= 200 && status < 400;
 }
 
 function flattenHealthChecks(healthChecks) {
