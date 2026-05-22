@@ -1,6 +1,7 @@
 import { getFeaturedPayload } from '@devfolio-blog/content-data';
 import { normalizeLocale } from '@devfolio-blog/i18n';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import type { RecipeDetail, RecipeQuery, RecipeSummary } from '@devfolio-blog/shared-types';
 import { PostsService } from '../posts/posts.service';
 
 @Injectable()
@@ -37,5 +38,18 @@ export class PublicContentService {
       ...featured,
       recentPosts: (await this.postsService.getPublishedPosts(normalizedLocale)).slice(0, 3),
     };
+  }
+
+  async getRecipes(query: RecipeQuery): Promise<RecipeSummary[]> {
+    // Placeholder for future persistence-backed recipes API.
+    // Current site implementation uses local markdown-first strategy.
+    void query;
+    return [];
+  }
+
+  async getRecipe(slug: string, locale?: string): Promise<RecipeDetail> {
+    void slug;
+    void locale;
+    throw new NotFoundException('Recipe was not found.');
   }
 }

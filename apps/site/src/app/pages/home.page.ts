@@ -204,7 +204,7 @@ export class HomePageComponent {
         subHeadline: 'Backend Engineer · Architecture · AI Engineering',
         heroTitle: 'Building stable, evolvable complex business systems',
         heroDescription:
-          'I am a backend engineer focused on complex business systems, microservice governance, system reliability, architecture refactoring, and AI-assisted engineering. This site captures my project work, architecture notes, technical writing, and resume.',
+          'I am a backend engineer focused on complex business systems, microservice governance, system reliability, architecture refactoring, and AI-assisted engineering. This site captures my project work, fitness notes, recipe sharing, technical writing, and resume.',
         ctaResume: 'View Resume',
         ctaArchitecture: 'Architecture Cases',
         ctaBlog: 'Technical Blog',
@@ -261,7 +261,7 @@ export class HomePageComponent {
       subHeadline: '后端工程师 · 架构实践 · AI Engineering',
       heroTitle: '构建稳定、可演进的复杂业务系统',
       heroDescription:
-        '我是一名后端工程师，长期关注复杂业务系统、微服务治理、系统稳定性、架构重构与 AI 工具化实践。这个站点用于沉淀我的项目经验、架构设计、技术博客和职业简历。',
+        '我是一名后端工程师，长期关注复杂业务系统、微服务治理、系统稳定性、架构重构与 AI 工具化实践。这个站点用于沉淀我的项目经验、健身记录、食谱分享、技术博客和职业简历。',
       ctaResume: '查看简历',
       ctaArchitecture: '架构案例',
       ctaBlog: '技术博客',
