@@ -1,0 +1,85 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: radial-gradient(circle at 50% 0%, #4b2713 0%, #1a0e08 52%, #0a0503 100%);
+        color: #fff5de;
+        font-family: "Segoe UI", Arial, sans-serif;
+      }
+      #root { position: relative; }
+      .clip { position: absolute; }
+      .bg { inset: 0; width: 1080px; height: 1920px; object-fit: cover; }
+      .mask { inset: 0; width: 1080px; height: 1920px; background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.72)); }
+      .title-wrap { left: 72px; top: 180px; width: 900px; }
+      .eyebrow { font-size: 38px; letter-spacing: 4px; color: #ffd48a; }
+      .title { margin-top: 14px; font-size: 126px; font-weight: 900; line-height: 1.02; }
+      .sub { margin-top: 28px; font-size: 44px; color: #ffe7b9; }
+
+      .step { left: 72px; width: 936px; border-radius: 24px; background: rgba(62,28,12,.76); border: 1px solid rgba(255,214,152,.32); padding: 30px; }
+      .step .idx { font-size: 30px; color: #ffd48a; margin-bottom: 8px; }
+      .step .txt { font-size: 50px; line-height: 1.24; font-weight: 800; }
+      .s1 { top: 1180px; }
+      .s2 { top: 1180px; }
+      .s3 { top: 1180px; }
+
+      .final { left: 72px; top: 190px; width: 936px; border-radius: 999px; background: linear-gradient(90deg, rgba(223,89,28,.92), rgba(255,174,47,.92)); padding: 24px 34px; font-size: 54px; font-weight: 900; }
+      .line { left: 72px; top: 1550px; width: 936px; font-size: 46px; line-height: 1.3; color: #ffe7bc; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="portrait-voice" data-start="0" data-duration="18" data-width="1080" data-height="1920">
+      <audio id="vo" class="clip" data-start="0" data-duration="18" data-track-index="0" src="../assets/hairtail-voice.wav"></audio>
+
+      <img id="bg1" class="clip bg" data-start="0" data-duration="6" data-track-index="1" src="../assets/hero_hairtail.png" alt="红烧带鱼" />
+      <div id="m1" class="clip mask" data-start="0" data-duration="6" data-track-index="2"></div>
+      <div id="tWrap" class="clip title-wrap" data-start="0.2" data-duration="5.6" data-track-index="3">
+        <div class="eyebrow">家常硬菜</div>
+        <div class="title">红烧带鱼</div>
+        <div class="sub">外酥里嫩，咸甜鲜香</div>
+      </div>
+
+      <img id="bg2" class="clip bg" data-start="6" data-duration="8" data-track-index="1" src="../assets/hairtail-steps.png" alt="步骤" />
+      <div id="m2" class="clip mask" data-start="6" data-duration="8" data-track-index="2"></div>
+
+      <div id="step1" class="clip step s1" data-start="6.2" data-duration="2.5" data-track-index="3"><div class="idx">STEP 1</div><div class="txt">带鱼切段拍粉，煎至两面金黄</div></div>
+      <div id="step2" class="clip step s2" data-start="8.8" data-duration="2.4" data-track-index="3"><div class="idx">STEP 2</div><div class="txt">姜蒜爆香，加入生抽老抽和料酒</div></div>
+      <div id="step3" class="clip step s3" data-start="11.25" data-duration="2.55" data-track-index="3"><div class="idx">STEP 3</div><div class="txt">回锅焖煮收汁，浓亮即可出锅</div></div>
+
+      <img id="bg3" class="clip bg" data-start="14" data-duration="4" data-track-index="1" src="../assets/hero_hairtail.png" alt="成品" />
+      <div id="m3" class="clip mask" data-start="14" data-duration="4" data-track-index="2"></div>
+      <div id="final" class="clip final" data-start="14.2" data-duration="3.4" data-track-index="3">色泽红亮，酱香拉满</div>
+      <div id="line" class="clip line" data-start="14.45" data-duration="3.2" data-track-index="4">配一碗热米饭，马上开吃。</div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      tl.from("#tWrap", { opacity: 0, x: -40, duration: 0.9 }, 0.15);
+      tl.from("#tWrap .title", { scale: 0.92, duration: 1.1 }, 0.2);
+      tl.from("#tWrap .sub", { opacity: 0, y: 22, duration: 0.8 }, 0.65);
+      tl.to("#bg1", { scale: 1.08, duration: 6, ease: "none" }, 0);
+
+      tl.from("#step1", { opacity: 0, y: 45, duration: 0.45 }, 6.2);
+      tl.to("#step1", { opacity: 0, y: -20, duration: 0.35 }, 8.35);
+      tl.from("#step2", { opacity: 0, y: 45, duration: 0.45 }, 8.8);
+      tl.to("#step2", { opacity: 0, y: -20, duration: 0.35 }, 10.9);
+      tl.set("#step2", { opacity: 0 }, 11.25);
+      tl.from("#step3", { opacity: 0, y: 45, duration: 0.45 }, 11.25);
+      tl.to("#step3", { opacity: 0, y: -20, duration: 0.4 }, 13.5);
+      tl.to("#bg2", { scale: 1.08, y: -60, duration: 8, ease: "none" }, 6);
+
+      tl.from("#final", { opacity: 0, y: 34, duration: 0.55 }, 14.2);
+      tl.from("#line", { opacity: 0, y: 22, duration: 0.55 }, 14.45);
+      tl.to("#bg3", { scale: 1.1, duration: 4, ease: "none" }, 14);
+      window.__timelines["portrait-voice"] = tl;
+    </script>
+  </body>
+</html>
